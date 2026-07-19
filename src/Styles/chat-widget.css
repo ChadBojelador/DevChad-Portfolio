@@ -108,7 +108,7 @@
   border: 1px solid var(--border);
   border-radius: 8px;
   background: var(--surface);
-  color: #514b46;
+  color: var(--text-soft);
   font-size: 0.8rem;
   line-height: 1.35;
   text-align: left;
@@ -137,9 +137,9 @@
   line-height: 1.55;
 }
 
-.portfolio-chat-msg--assistant { background: #fbfaf7; }
-.portfolio-chat-msg--user { border-color: #dbad99; background: var(--accent-soft); color: #64311f; }
-.portfolio-chat-msg--error { border-color: #e2b2a7; background: #fceeea; color: #843624; }
+.portfolio-chat-msg--assistant { background: var(--message-assistant); }
+.portfolio-chat-msg--user { border-color: var(--accent-border); background: var(--accent-soft); color: var(--message-user-text); }
+.portfolio-chat-msg--error { border-color: #e2b2a7; background: var(--message-error); color: var(--message-error-text); }
 .portfolio-chat-markdown p { margin: 0 0 0.5rem; }
 .portfolio-chat-markdown p:last-child { margin-bottom: 0; }
 .portfolio-chat-markdown a { color: var(--accent-dark); text-underline-offset: 0.12em; }
@@ -189,11 +189,11 @@
   padding: 0.48rem 0.52rem 0.48rem 0.9rem;
   border: 1px solid var(--border-strong);
   border-radius: 12px;
-  background: #fffefa;
+  background: var(--field);
 }
 
 .portfolio-chat-input { flex: 1; min-width: 0; padding: 0.3rem 0; border: 0; outline: 0; background: transparent; color: var(--text); font-size: 0.92rem; }
-.portfolio-chat-input::placeholder { color: #928a82; }
+.portfolio-chat-input::placeholder { color: var(--placeholder); }
 .portfolio-chat-input:disabled { cursor: not-allowed; }
 
 .portfolio-chat-send {

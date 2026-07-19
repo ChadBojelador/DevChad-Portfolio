@@ -10,11 +10,46 @@
   --accent-dark: #934329;
   --accent-soft: #f4e2d8;
   --focus: #8d3f27;
+  --field: #fffefa;
+  --text-soft: #514b46;
+  --label: #504a45;
+  --active-border: #e7cabe;
+  --accent-border: #d6a994;
+  --message-assistant: #fbfaf7;
+  --message-user-text: #64311f;
+  --message-error: #fceeea;
+  --message-error-text: #843624;
+  --placeholder: #928a82;
   color: var(--text);
   background: var(--canvas);
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
+}
+
+:root[data-theme='dark'] {
+  --canvas: #1a1816;
+  --surface: #24211f;
+  --surface-muted: #302c29;
+  --text: #f5efea;
+  --text-muted: #c6beb7;
+  --border: #4a443f;
+  --border-strong: #665d56;
+  --accent: #d77957;
+  --accent-dark: #f1b49c;
+  --accent-soft: #4b2d24;
+  --focus: #ffccba;
+  --field: #2a2724;
+  --text-soft: #e1d8d1;
+  --label: #e1d8d1;
+  --active-border: #8b5948;
+  --accent-border: #a96a55;
+  --message-assistant: #2a2724;
+  --message-user-text: #ffded2;
+  --message-error: #4a2824;
+  --message-error-text: #ffd4cc;
+  --placeholder: #b8afa8;
+  color-scheme: dark;
 }
 
 * { box-sizing: border-box; }
@@ -119,7 +154,7 @@ textarea:focus-visible {
 
 .primary-navigation__link img { width: 1.08rem; height: 1.08rem; opacity: 0.62; }
 .primary-navigation__link:hover { color: var(--text); background: var(--surface-muted); }
-.primary-navigation__link.is-active { border-color: #e7cabe; background: var(--accent-soft); color: var(--accent-dark); }
+.primary-navigation__link.is-active { border-color: var(--active-border); background: var(--accent-soft); color: var(--accent-dark); }
 .primary-navigation__link.is-active img { opacity: 1; }
 
 .app-sidebar__music { margin-top: auto; padding: 1.2rem 0.2rem 0; }
@@ -142,9 +177,8 @@ textarea:focus-visible {
 .playlist-fallback-note { margin: 0; padding: 0 0.8rem 0.8rem; color: var(--text-muted); font-size: 0.72rem; }
 
 .app-sidebar__footer {
-  display: flex;
-  align-items: center;
-  gap: 0.48rem;
+  display: grid;
+  gap: 0.7rem;
   margin-top: auto;
   padding: 1rem 0.75rem 0;
   border-top: 1px solid var(--border);
@@ -153,7 +187,24 @@ textarea:focus-visible {
   line-height: 1.4;
 }
 
+.app-sidebar__availability { display: flex; align-items: center; gap: 0.48rem; }
 .app-sidebar__status { width: 0.5rem; height: 0.5rem; border-radius: 50%; background: #6f9a6b; }
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.42rem;
+  min-height: 2rem;
+  padding: 0.35rem 0.55rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface-muted);
+  color: var(--text);
+  font-size: 0.76rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.theme-toggle:hover { border-color: var(--accent-border); background: var(--accent-soft); color: var(--accent-dark); }
 .app-mobile-header,
 .app-mobile-music { display: none; }
 
@@ -222,7 +273,7 @@ textarea:focus-visible {
   border: 1px solid var(--border);
   border-radius: 999px;
   background: var(--surface);
-  color: #514b46;
+  color: var(--text-soft);
   font-size: 0.81rem;
   font-weight: 620;
   line-height: 1.2;
@@ -341,10 +392,10 @@ textarea:focus-visible {
 .social-links { padding: 1.1rem; }
 .social-icons { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.75rem; }
 .social-icons a { display: grid; width: 2.3rem; height: 2.3rem; place-items: center; border: 1px solid var(--border); border-radius: 8px; color: var(--text-muted); text-decoration: none; }
-.social-icons a:hover { border-color: #d6a994; background: var(--accent-soft); color: var(--accent-dark); }
+.social-icons a:hover { border-color: var(--accent-border); background: var(--accent-soft); color: var(--accent-dark); }
 
 .contact-form { display: grid; gap: 1rem; padding: 1.25rem; }
-.form-group label { display: block; margin-bottom: 0.38rem; color: #504a45; font-size: 0.86rem; font-weight: 700; }
+.form-group label { display: block; margin-bottom: 0.38rem; color: var(--label); font-size: 0.86rem; font-weight: 700; }
 .form-group input,
 .form-group textarea {
   display: block;
@@ -352,7 +403,7 @@ textarea:focus-visible {
   padding: 0.7rem 0.78rem;
   border: 1px solid var(--border-strong);
   border-radius: 8px;
-  background: #fffefa;
+  background: var(--field);
   color: var(--text);
   font-size: 0.93rem;
   line-height: 1.5;
@@ -386,6 +437,9 @@ textarea:focus-visible {
   .app-mobile-music { display: block; margin: 0; border-bottom: 1px solid var(--border); background: var(--surface); }
   .app-mobile-music summary { padding: 0.62rem 1rem; color: var(--text-muted); font-size: 0.79rem; font-weight: 650; cursor: pointer; }
   .app-mobile-music .playlist-card { margin: 0 1rem 1rem; }
+  .app-mobile-header__controls { display: flex; flex: 1; align-items: center; gap: 0.35rem; min-width: 0; }
+  .app-mobile-header__controls .theme-toggle { flex: 0 0 auto; width: 2.2rem; padding: 0; }
+  .app-mobile-header__controls .theme-toggle span:last-child { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
   .app-mobile-header .primary-navigation { flex: 1; margin: 0; overflow-x: auto; }
   .app-mobile-header .primary-navigation ul { display: flex; justify-content: flex-end; gap: 0.25rem; min-width: max-content; }
   .app-mobile-header .primary-navigation__link { padding: 0.5rem; }
@@ -402,7 +456,7 @@ textarea:focus-visible {
 
 @media (max-width: 520px) {
   .app-mobile-header { align-items: flex-start; }
-  .app-mobile-header > div { min-width: 90px; }
+  .app-mobile-header > div:first-child { min-width: 90px; }
   .app-mobile-header p { font-size: 0.9rem; }
   .app-mobile-header__eyebrow { font-size: 0.62rem; }
   .home-intro { grid-template-columns: 1fr; }
