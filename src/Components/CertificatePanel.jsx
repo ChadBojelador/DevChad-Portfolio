@@ -1,84 +1,24 @@
-import BorderGlow from './BorderGlow';
-import '../Styles/ProjectPanel.css';
-import '../Styles/certificates.css';
-
-const borderGlowProps = {
-  edgeSensitivity: 30,
-  glowColor: '0 0 100',
-  backgroundColor: '#121212',
-  borderRadius: 28,
-  glowRadius: 40,
-  glowIntensity: 0.9,
-  coneSpread: 25,
-  animated: false,
-  colors: ['#ffffff', '#d6d6d6', '#8a8a8a'],
-  fillOpacity: 0,
-};
-
-const CertificatePanel = ({ cert, index }) => {
-  const badgeVariant = (index % 6) + 1;
-  const visibleTags = Array.isArray(cert.tags) ? cert.tags : [];
-  
+function CertificatePanel({ cert }) {
   return (
-    <BorderGlow {...borderGlowProps} className="cert-panel-glow">
-      <article className="cert-panel">
-        
-        {/* Left pane: Details */}
-        <div className="cert-details-pane">
-          <div className="cert-nav-row">
-            <span className={`project-badge project-badge-${badgeVariant}`}>
-              Cert {String(index + 1).padStart(2, '0')}
-            </span>
-            <div className="cert-media-thumb">
-              <img src={cert.image} alt={cert.title} />
-            </div>
-            <div className="cert-headers">
-              <h2 className="panel-title">{cert.title}</h2>
-              <span className="cert-issuer-meta">
-                {cert.issuer} • Issued {cert.date}
-              </span>
-            </div>
-          </div>
-
-          <div className="cert-content-body">
-            <p className="project-description">
-              {cert.description || 'No description provided.'}
-            </p>
-
-            {visibleTags.length > 0 && (
-              <div className="project-tags">
-                {visibleTags.map((tag, tIndex) => (
-                  <span
-                    key={`${tag}-${tIndex}`}
-                    className={`project-tag project-badge-${((index + tIndex) % 6) + 1}`}
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            )}
-            
-            <div className="cert-footer-actions">
-              {cert.link && (
-                <a href={cert.link} target="_blank" rel="noopener noreferrer" className="open-project-button">
-                  Validate Certificate
-                </a>
-              )}
-              {cert.id && <span className="cert-id-label">ID: {cert.id}</span>}
-            </div>
-          </div>
+    <article className="certificate-card">
+      <img src={cert.image} alt="" className="certificate-card__image" />
+      <div className="certificate-card__content">
+        <p className="certificate-card__issuer">{cert.issuer}</p>
+        <h2>{cert.title}</h2>
+        <p className="certificate-card__date">Issued {cert.date}</p>
+        <p>{cert.description}</p>
+        <div className="tag-list">
+          {cert.tags.map((tag) => <span className="tag" key={tag}>{tag}</span>)}
         </div>
-
-        {/* Right pane: Large Image display */}
-        <aside className="cert-media-pane">
-          <div className="cert-image-wrapper">
-             <img src={cert.image} alt={`${cert.title} Full`} className="cert-full-image" />
-          </div>
-        </aside>
-
-      </article>
-    </BorderGlow>
+        <div className="certificate-card__footer">
+          {cert.id && <span>Credential ID: {cert.id}</span>}
+          {cert.link && cert.link !== '#' && (
+            <a href={cert.link} target="_blank" rel="noopener noreferrer">View credential <span aria-hidden="true">↗</span></a>
+          )}
+        </div>
+      </div>
+    </article>
   );
-};
+}
 
 export default CertificatePanel;

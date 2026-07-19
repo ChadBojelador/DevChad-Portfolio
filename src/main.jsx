@@ -11,6 +11,7 @@ import ErrorBoundary, { RouteErrorFallback } from './Components/ErrorBoundary.js
 const Projects = lazy(() => import('./pages/Projects.jsx'));
 const ContactPage = lazy(() => import('./pages/ContactPage.jsx'));
 const Certificates = lazy(() => import('./pages/Certificates.jsx'));
+const Tools = lazy(() => import('./pages/Tools.jsx'));
 
 
 const router = createBrowserRouter([
@@ -22,6 +23,7 @@ const router = createBrowserRouter([
       { path: '/projects', element: <Suspense fallback={null}><Projects /></Suspense> },
       { path: '/about', element: <Suspense fallback={null}><ContactPage /></Suspense> },
       { path: '/certificates', element: <Suspense fallback={null}><Certificates /></Suspense> },
+      { path: '/tools', element: <Suspense fallback={null}><Tools /></Suspense> },
 
     ],
   },

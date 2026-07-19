@@ -1,111 +1,25 @@
-// pages/Tools.jsx
-import { useEffect, useMemo } from 'react';
-import { animate, inView, stagger } from "motion";
-import Navigation from '../Components/Navigation';
 import { tools } from '../data/tools';
-import '../Styles/tools.css'
 
-const Tools = () => {
-
-  const colorClasses = useMemo(() => [
-    "box-1", "box-2", "box-3", "box-4", "box-5",
-    "box-6", "box-7", "box-8", "box-9", "box-10", "box-11"
-  ], []);
-
-  // Pre-compute stable color assignments for all tool items
-  const getColorClass = useMemo(() => {
-    let i = 0;
-    return () => colorClasses[i++ % colorClasses.length];
-  }, [colorClasses]);
-
-  useEffect(() => {
-    // Main title animation
-    animate(".text-head", { opacity: 1, y: 0 }, { delay: 0.3, duration: 0.8 });
-    
-    // Section animations
-    inView(".scroll-section", (element) => {
-      const sectionIndex = Array.from(document.querySelectorAll('.scroll-section')).indexOf(element);
-      const delay = sectionIndex * 0.15;
-      
-      animate(
-        element.querySelector(".category-title"),
-        { opacity: 1, y: 0 },
-        { delay, duration: 0.7 }
-      );
-      
-      animate(
-        element.querySelectorAll(".tool-card"),
-        { opacity: 1, scale: [0.9, 1], y: 0 },
-        { delay: stagger(0.08, { start: delay + 0.2 }), duration: 0.5 }
-      );
-      
-      return () => {
-        animate(element.querySelector(".category-title"), { opacity: 0, y: 20 }, { duration: 0.1 });
-        animate(element.querySelectorAll(".tool-card"), { opacity: 0, scale: 0.9 }, { duration: 0.1 });
-      };
-    });
-
-    // Mouse position tracking for hover effect
-    const handleMouseMove = (e) => {
-      const card = e.currentTarget;
-      const rect = card.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      card.style.setProperty('--x', `${x}px`);
-      card.style.setProperty('--y', `${y}px`);
-    };
-
-    const cards = document.querySelectorAll('.tool-card');
-    cards.forEach(card => {
-      card.addEventListener('mousemove', handleMouseMove);
-    });
-
-    return () => {
-      cards.forEach(card => {
-        card.removeEventListener('mousemove', handleMouseMove);
-      });
-    };
-  }, []);
-
+function Tools() {
   return (
-    <div className="App">
-      <div className="header-container">
-        <Navigation />
-        
-        <div className="tools-container">
-          <section className="scroll-section first-section">
-            <div className="section-content">
-              <h1 className="text-head">TECHSTACK</h1>
+    <div className="page">
+      <header className="page-header">
+        <p className="page-eyebrow">Technical toolkit</p>
+        <h1>Tools I reach for.</h1>
+        <p className="page-lede">A practical mix of languages, frameworks, and platforms for building full-stack experiences.</p>
+      </header>
+      <div className="tool-groups">
+        {tools.map((group) => (
+          <section className="tool-group" key={group.category}>
+            <h2>{group.category}</h2>
+            <div className="tag-list">
+              {group.items.map((item) => <span className="tag" key={item}>{item}</span>)}
             </div>
           </section>
-
-          {tools.map((toolGroup, index) => (
-            <section key={index} className="scroll-section">
-              <div className="section-content">
-                <h2 className="category-title">{toolGroup.category}</h2>
-                <div className="tools-grid">
-                  {toolGroup.items.map((item, itemIndex) => {
-                    const colorClass = getColorClass();
-                    return (
-                      <div 
-                        key={itemIndex} 
-                        className={`tool-card ${colorClass}`}
-                      >
-                        <div className="tool-content">
-                          <span className="tool-text">{item}</span>
-                          <div className="tool-hover-effect"></div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </section>
-          ))}
-        </div>
+        ))}
       </div>
     </div>
   );
-};
+}
 
 export default Tools;
