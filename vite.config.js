@@ -19,8 +19,8 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        // Keep in sync with CHAT_API_PORT in .env for local dev:
-        target: 'http://127.0.0.1:3003',
+        // Keep in sync with CHAT_API_PORT in .env for local dev (3002 by default):
+        target: 'http://127.0.0.1:3002',
         changeOrigin: true,
       },
     },

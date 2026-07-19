@@ -1,228 +1,86 @@
-import { useEffect, useRef, useState } from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
-import SpotifyPlaylistCard from './SpotifyPlaylistCard';
+import { useEffect, useState } from 'react';
+import { Outlet } from 'react-router-dom';
+import Navigation from './Navigation';
 import PortfolioChat from './PortfolioChat';
+import SpotifyPlaylistCard from './SpotifyPlaylistCard';
+import ThemeToggle from './ThemeToggle';
+import '../Styles/index.css';
 
-const FLOATING_MARGIN = 12;
+function getInitialTheme() {
+  if (typeof window === 'undefined') return 'light';
+
+  try {
+    const savedTheme = window.localStorage.getItem('portfolio-theme');
+    if (savedTheme === 'light' || savedTheme === 'dark') return savedTheme;
+  } catch {
+    // Fall back to the system preference when storage is unavailable.
+  }
+
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
 
 function AppShell() {
-  const { pathname } = useLocation();
-  const normalizedPath = pathname.replace(/\/+$/, '') || '/';
-  const nonHomeSegments = ['/projects', '/about', '/certificates', '/tools'];
-  const isDraggableRoute = nonHomeSegments.some((segment) => normalizedPath.endsWith(segment));
-  const isHome = !isDraggableRoute;
-
-  const floatingCardRef = useRef(null);
-  const dragStateRef = useRef({
-    isDragging: false,
-    pointerId: null,
-    offsetX: 0,
-    offsetY: 0,
-  });
-  const [isDragging, setIsDragging] = useState(false);
-  const [floatingPosition, setFloatingPosition] = useState(null);
-  const [homeStyle, setHomeStyle] = useState(null);
-  const [isMinimized, setIsMinimized] = useState(false);
-
-  const clampPosition = (x, y) => {
-    if (typeof window === 'undefined') return { x, y };
-    const element = floatingCardRef.current;
-    const cardWidth = element?.offsetWidth ?? Math.min(320, window.innerWidth * 0.92);
-    const cardHeight = element?.offsetHeight ?? 220;
-    const maxX = Math.max(FLOATING_MARGIN, window.innerWidth - cardWidth - FLOATING_MARGIN);
-    const maxY = Math.max(FLOATING_MARGIN, window.innerHeight - cardHeight - FLOATING_MARGIN);
-    return {
-      x: Math.min(Math.max(FLOATING_MARGIN, x), maxX),
-      y: Math.min(Math.max(FLOATING_MARGIN, y), maxY),
-    };
-  };
-
-  const getDefaultFloatingPosition = () => {
-    if (typeof window === 'undefined') return { x: FLOATING_MARGIN, y: FLOATING_MARGIN };
-    const defaultLeft = Math.max(FLOATING_MARGIN, (window.innerWidth - 1120) / 2);
-    const defaultTop = window.innerHeight - 220 - FLOATING_MARGIN;
-    return clampPosition(defaultLeft, defaultTop);
-  };
-
-  // Draggable routes positioning
-  useEffect(() => {
-    if (!isDraggableRoute) return;
-    if (floatingPosition) return;
-    setFloatingPosition(getDefaultFloatingPosition());
-  }, [isDraggableRoute, floatingPosition]);
+  const [theme, setTheme] = useState(getInitialTheme);
 
   useEffect(() => {
-    if (!isDraggableRoute) return undefined;
-    const handleResize = () => {
-      setFloatingPosition((prev) => {
-        if (!prev) return getDefaultFloatingPosition();
-        return clampPosition(prev.x, prev.y);
-      });
-    };
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [isDraggableRoute]);
+    document.documentElement.dataset.theme = theme;
+    document.documentElement.style.colorScheme = theme;
 
-  // Home route precise alignment tracking
-  useEffect(() => {
-    if (!isHome) return;
-
-    let observer;
-    const updateHomePos = () => {
-      const isMobile = window.innerWidth <= 768;
-
-      if (isMobile) {
-        // Mobile: place card directly below the accomplishments section
-        const carousel = document.getElementById('carousel-section');
-        const contentContainer = document.querySelector('.content-container');
-        if (carousel) {
-          const carouselRect = carousel.getBoundingClientRect();
-          const containerRect = contentContainer?.getBoundingClientRect();
-
-          setHomeStyle({
-            position: 'absolute',
-            top: `${carouselRect.bottom + window.scrollY + 16}px`,
-            left: '50%',
-            transform: 'translateX(-50%)',
-            width: containerRect
-              ? `${Math.min(containerRect.width, window.innerWidth * 0.94)}px`
-              : 'min(94vw, 360px)'
-          });
-        }
-      } else {
-        // Desktop: Align perfectly with "What I've Accompolished" (carousel-section)
-        const carousel = document.getElementById('carousel-section');
-        const leftCol = document.querySelector('.left-column');
-        const aside = document.querySelector('.left-column aside');
-
-        if (carousel && leftCol) {
-          const carouselRect = carousel.getBoundingClientRect();
-          const leftColRect = leftCol.getBoundingClientRect();
-
-          let targetTop = carouselRect.top + window.scrollY;
-
-          // Ensure it never overlaps the white profile card
-          if (aside) {
-            const asideRect = aside.getBoundingClientRect();
-            const minTop = asideRect.bottom + window.scrollY + 90; // 24px padding below white card
-            if (targetTop < minTop) {
-              targetTop = minTop;
-            }
-          }
-
-          setHomeStyle({
-            position: 'absolute',
-            top: `${targetTop}px`,
-            left: `${leftColRect.left + window.scrollX}px`,
-            width: `${leftColRect.width}px`,
-            transform: 'none'
-          });
-        }
-      }
-    };
-
-    updateHomePos();
-    window.addEventListener('resize', updateHomePos);
-
-    // We observe mutations incase fonts/images push the layout down
-    if ('ResizeObserver' in window) {
-      observer = new ResizeObserver(updateHomePos);
-      const root = document.getElementById('root');
-      if (root) observer.observe(root);
+    try {
+      window.localStorage.setItem('portfolio-theme', theme);
+    } catch {
+      // The selected theme still applies for the current session.
     }
+  }, [theme]);
 
-    return () => {
-      window.removeEventListener('resize', updateHomePos);
-      if (observer) observer.disconnect();
-    };
-  }, [isHome]);
-
-
-  const handleDragStart = (event) => {
-    if (!isDraggableRoute) return;
-    if (event.button !== undefined && event.button !== 0) return;
-    const element = floatingCardRef.current;
-    if (!element) return;
-    const rect = element.getBoundingClientRect();
-    dragStateRef.current = {
-      isDragging: true,
-      pointerId: event.pointerId,
-      offsetX: event.clientX - rect.left,
-      offsetY: event.clientY - rect.top,
-    };
-    setIsDragging(true);
-    event.currentTarget.setPointerCapture?.(event.pointerId);
-  };
-
-  const handleDragMove = (event) => {
-    const dragState = dragStateRef.current;
-    if (!dragState.isDragging) return;
-    if (dragState.pointerId !== event.pointerId) return;
-    const nextLeft = event.clientX - dragState.offsetX;
-    const nextTop = event.clientY - dragState.offsetY;
-    setFloatingPosition(clampPosition(nextLeft, nextTop));
-  };
-
-  const handleDragEnd = (event) => {
-    const dragState = dragStateRef.current;
-    if (!dragState.isDragging || dragState.pointerId !== event.pointerId) return;
-    dragStateRef.current = { isDragging: false, pointerId: null, offsetX: 0, offsetY: 0 };
-    setIsDragging(false);
-    event.currentTarget.releasePointerCapture?.(event.pointerId);
-  };
-
-  const floatingStyle =
-    isDraggableRoute && floatingPosition
-      ? {
-        position: 'fixed',
-        left: `${floatingPosition.x}px`,
-        top: `${floatingPosition.y}px`,
-        bottom: 'auto',
-        right: 'auto',
-      }
-      : undefined;
-
-  const persistentClassName = isHome
-    ? 'spotify-persistent spotify-persistent--home'
-    : 'spotify-persistent spotify-persistent--floating spotify-persistent--draggable';
+  const toggleTheme = () => setTheme((currentTheme) => (currentTheme === 'dark' ? 'light' : 'dark'));
 
   return (
-    <>
-      <Outlet />
-      <div
-        className={persistentClassName}
-        style={isHome ? (homeStyle || {}) : floatingStyle}
-        ref={floatingCardRef}
-      >
-        {isDraggableRoute && (
-          <div className="spotify-controls-row">
-            <button
-              type="button"
-              className="spotify-minimize-btn"
-              onClick={() => setIsMinimized((prev) => !prev)}
-              aria-label={isMinimized ? "Expand player" : "Minimize player"}
-            >
-              {isMinimized ? '＋' : '—'}
-            </button>
-            <button
-              type="button"
-              className={`spotify-drag-handle${isDragging ? ' is-dragging' : ''}`}
-              onPointerDown={handleDragStart}
-              onPointerMove={handleDragMove}
-              onPointerUp={handleDragEnd}
-              onPointerCancel={handleDragEnd}
-              aria-label="Drag music player"
-            >
-              ⠿ Drag player
-            </button>
-          </div>
-        )}
-        <div className={isMinimized && isDraggableRoute ? 'spotify-hidden-container' : ''}>
-          <SpotifyPlaylistCard compact={isDraggableRoute} />
+    <div className="app-shell">
+      <aside className="app-sidebar">
+        <div className="app-sidebar__identity">
+          <span className="app-sidebar__eyebrow">Portfolio</span>
+          <p className="app-sidebar__name">Chad Bojelador</p>
+          <p className="app-sidebar__role">Student developer</p>
         </div>
-      </div>
+
+        <Navigation />
+
+        <div className="app-sidebar__music">
+          <SpotifyPlaylistCard compact />
+        </div>
+
+        <div className="app-sidebar__footer">
+          <div className="app-sidebar__availability">
+            <span className="app-sidebar__status" aria-hidden="true" />
+            Available for thoughtful collaborations
+          </div>
+          <ThemeToggle theme={theme} onToggle={toggleTheme} />
+        </div>
+      </aside>
+
+      <header className="app-mobile-header">
+        <div>
+          <span className="app-mobile-header__eyebrow">Portfolio</span>
+          <p>Chad Bojelador</p>
+        </div>
+        <div className="app-mobile-header__controls">
+          <ThemeToggle theme={theme} onToggle={toggleTheme} />
+          <Navigation />
+        </div>
+      </header>
+
+      <details className="app-mobile-music">
+        <summary>Listening to music</summary>
+        <SpotifyPlaylistCard compact />
+      </details>
+
+      <main className="app-main">
+        <Outlet />
+      </main>
+
       <PortfolioChat />
-    </>
+    </div>
   );
 }
 

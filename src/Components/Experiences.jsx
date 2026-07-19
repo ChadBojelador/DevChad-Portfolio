@@ -3,15 +3,6 @@ import { motion, useInView } from 'framer-motion';
 import { experiences } from '../data/experiences';
 import '../Styles/experiences.css';
 
-const fadeUp = {
-  hidden: { opacity: 0, y: 40 },
-  visible: (i) => ({
-    opacity: 1,
-    y: 0,
-    transition: { delay: i * 0.18, duration: 0.65, ease: [0.22, 1, 0.36, 1] },
-  }),
-};
-
 const slideIn = (side) => ({
   hidden: { opacity: 0, x: side === 'left' ? -50 : 50 },
   visible: {

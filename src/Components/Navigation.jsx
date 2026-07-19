@@ -1,25 +1,25 @@
-// Navigation.jsx
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { navItems } from '../data/navigation';
 
-const Navigation = () => (
-  <header>
-    <nav>
-      <ul className="list-container">
-        {navItems.map((item, index) => (
-          <li className="list" key={index} title={item.label}>
-            <Link to={item.path}>
-              <img
-                className={`icon icon-${item.className}`}
-                src={item.icon}
-                alt={item.alt}
-              />
-            </Link>
+function Navigation() {
+  return (
+    <nav className="primary-navigation" aria-label="Primary navigation">
+      <ul>
+        {navItems.map((item) => (
+          <li key={item.path}>
+            <NavLink
+              to={item.path}
+              end={item.path === '/'}
+              className={({ isActive }) => `primary-navigation__link${isActive ? ' is-active' : ''}`}
+            >
+              <img src={item.icon} alt="" aria-hidden="true" />
+              <span>{item.label}</span>
+            </NavLink>
           </li>
         ))}
       </ul>
     </nav>
-  </header>
-);
+  );
+}
 
 export default Navigation;

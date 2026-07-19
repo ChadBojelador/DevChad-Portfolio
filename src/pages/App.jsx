@@ -1,149 +1,51 @@
-// pages/App.jsx
-import { useEffect } from 'react';
-import { motion } from 'framer-motion';
 import profilePhoto from '../assets/profile-photo.png';
-import CustomCursor from '../Components/CustomCursor';
-import Navigation from '../Components/Navigation';
-
 import Signages from '../Components/Signages';
 import { accomplishments } from '../data/accomplishments';
-import '../Styles/index.css';
-import { MotionCarousel } from '@/Components/animate-ui/components/community/motion-carousel';
 
-export const MotionCarouselDemo = () => {
-  const OPTIONS = { loop: true };
-
-  return (
-    <div id="carousel-section" className="project-showcase-section">
-      <h2 className="project-showcase-title text-3xl font-bold text-white text-center font-['Poppins'] tracking-wider">What I've Accomplished</h2>
-      <MotionCarousel items={accomplishments} options={OPTIONS} />
-    </div>
-  );
-};
-
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.1, delayChildren: 0.3 }
-  }
-};
-
-const itemVariants = {
-  hidden: { y: 20, opacity: 0 },
-  visible: { y: 0, opacity: 1 }
-};
+const skills = [
+  'React', 'Node.js', 'Express', 'SQL', 'NoSQL', 'Python', 'LangChain', 'Google ADK', 'Claude CLI',
+];
 
 function App() {
-  useEffect(() => {
-    document.body.style.cursor = 'none';
-    return () => { document.body.style.cursor = 'default'; };
-  }, []);
-
   return (
-    <div className="main-contain">
-      <div className="App">
-        <CustomCursor />
-        <motion.div
-          className="header-container"
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          <Navigation />
+    <div className="page page--home">
+      <section className="home-intro">
+        <img className="home-intro__portrait" src={profilePhoto} alt="Chad Bojelador" />
+        <div>
+          <p className="page-eyebrow">Student developer</p>
+          <h1>Software with a clear purpose.</h1>
+          <p className="page-lede">
+            I am Chad Bojelador, an Information Technology student focused on building useful software with
+            intuitive design and dependable functionality.
+          </p>
+        </div>
+      </section>
 
-          <div className="header-container2">
-            <div className="left-column">
-              <aside>
-                <motion.img
-                  className="picture"
-                  src={profilePhoto}
-                  alt="Profile picture of Chad Bojelador"
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.5 }}
-                />
-                <motion.div className="description-pic" variants={containerVariants}>
-                  <motion.h1 className="name" variants={itemVariants}>
-                    Chad Bojelador
-                  </motion.h1>
-                  <motion.p variants={itemVariants}>
-                    A Student Developer as well as a Bachelor of Science in Information Technology.
-                  </motion.p>
-                </motion.div>
-              </aside>
-            </div>
+      <section className="home-section" aria-labelledby="skills-heading">
+        <p className="section-label">Current toolkit</p>
+        <h2 id="skills-heading">Tools I use to turn ideas into working products.</h2>
+        <div className="tag-list" aria-label="Technical skills">
+          {skills.map((skill) => <span key={skill} className="tag">{skill}</span>)}
+        </div>
+      </section>
 
-            <div className="content-wrapper">
-              <section>
-                <div className="content-container">
-              <motion.div
-                className="title-container"
-                variants={containerVariants}
-                initial="hidden"
-                animate="visible"
-              >
-                <motion.h1
-                  className="Title"
-                  variants={itemVariants}
-                  initial={{ x: -50 }}
-                  animate={{ x: 0 }}
-                  transition={{ type: 'spring' }}
-                >
-                  STUDENT
-                </motion.h1>
-                <motion.h1
-                  className="Title"
-                  id="title1"
-                  variants={itemVariants}
-                  initial={{ x: -50 }}
-                  animate={{ x: 0 }}
-                  transition={{ type: 'spring', delay: 0.1 }}
-                >
-                  DEVELOPER
-                </motion.h1>
-                <motion.div className="p-container" variants={containerVariants}>
-                  <motion.p variants={itemVariants}>
-                    Focused on building software that drives impact
-                  </motion.p>
-                  <motion.p variants={itemVariants}>
-                    with intuitive design and seamless functionality.
-                  </motion.p>
-                </motion.div>
-              </motion.div>
+      <Signages />
 
-              <motion.div
-                className="boxes"
-                variants={containerVariants}
-                initial="hidden"
-                animate="visible"
-              >
-                {['React','Nodejs','Express','NoSQL','SQL','LangChain','HuggingFace','GoogleADK','Claude CLI','Anti Gravity','Python'].map((tech, idx) => (
-                  <motion.div
-                    key={idx}
-                    className={`box box-${idx+1}`}
-                    variants={itemVariants}
-                    whileHover={{ scale: 1.05 }}
-                  >
-                    <p>{tech}</p>
-                  </motion.div>
-                ))}
-              </motion.div>
-              <motion.div
-                variants={containerVariants}
-                initial="hidden"
-                animate="visible"
-              >
-                <Signages />
-              </motion.div>
-              
-              <MotionCarouselDemo />
-                </div>
-              </section>
-            </div>
-          </div>
-        </motion.div>
-    </div>
+      <section className="home-section" aria-labelledby="accomplishments-heading">
+        <p className="section-label">Selected outcomes</p>
+        <h2 id="accomplishments-heading">What I have been building.</h2>
+        <div className="outcome-list">
+          {accomplishments.map((item) => (
+            <article key={item.metric} className="outcome-card">
+              <span className="outcome-card__number">{item.metric}</span>
+              <div>
+                <h3>{item.title}</h3>
+                <p>{item.description}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
     </div>
   );
 }
