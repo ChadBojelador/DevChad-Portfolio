@@ -1,4 +1,4 @@
-import { buildSystemInstructions } from '../src/data/chatContext.js';
+import { buildSystemInstructions } from './chatContext.js';
 import { streamText } from 'ai';
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { createOpenAI } from '@ai-sdk/openai';
@@ -28,8 +28,9 @@ const DEFAULT_BUDGETS = {
   },
 };
 
-const DEFAULT_PROVIDER_ORDER = ['gemini', 'groq', 'openai', 'xai'];
+const DEFAULT_PROVIDER_ORDER = ['openrouter', 'gemini', 'groq', 'openai', 'xai'];
 const DEFAULT_MODELS = {
+  openrouter: { primary: 'meta-llama/llama-3.1-8b-instruct:free', fallback: [] },
   gemini: { primary: 'gemini-2.0-flash', fallback: ['gemini-1.5-flash'] },
   groq: { primary: 'llama-3.1-8b-instant', fallback: [] },
   openai: { primary: 'gpt-3.5-turbo', fallback: [] },
@@ -155,6 +156,7 @@ function buildProviderConfigs(env) {
   const groqKey = (env.GROQ_API_KEY || '').trim();
   const openaiKey = (env.OPENAI_API_KEY || '').trim();
   const xaiKey = (env.XAI_API_KEY || '').trim();
+  const openrouterKey = (env.OPENROUTER_API_KEY || '').trim();
   const groqEnabled = parseBoolean(env.GROQ_ENABLED, true);
 
   const googleProvider = geminiKey ? createGoogleGenerativeAI({ apiKey: geminiKey }) : null;
@@ -173,8 +175,23 @@ function buildProviderConfigs(env) {
         apiKey: xaiKey,
       })
     : null;
+  const openrouterProvider = openrouterKey
+    ? createOpenAI({
+        name: 'openrouter',
+        baseURL: 'https://openrouter.ai/api/v1',
+        apiKey: openrouterKey,
+      })
+    : null;
 
   return {
+    openrouter: {
+      configured: Boolean(openrouterProvider),
+      model: (modelId) => openrouterProvider(modelId),
+      models: uniqList([
+        env.OPENROUTER_MODEL || DEFAULT_MODELS.openrouter.primary,
+        ...parseCsv(env.OPENROUTER_FALLBACK_MODELS, DEFAULT_MODELS.openrouter.fallback),
+      ]),
+    },
     gemini: {
       configured: Boolean(googleProvider),
       model: (modelId) => googleProvider(modelId),
@@ -238,7 +255,7 @@ export async function handleChatCore(body, env, clientIp = 'unknown', userTier =
   }
 
   const conciseMode = parseBoolean(env.CHAT_FORCE_CONCISE_MODE, true);
-  const systemBase = buildSystemInstructions({ messages: activeMessages });
+  const systemBase = await buildSystemInstructions(env, { messages: activeMessages });
   const system = conciseMode
     ? `${systemBase}\n\nResponse policy:\n- Keep answers concise and practical.\n- Prefer bullet points.\n- Default to at most ${budget.responseWordLimit} words unless user explicitly asks for more detail.`
     : systemBase;

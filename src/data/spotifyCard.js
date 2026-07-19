@@ -2,7 +2,6 @@
 export const spotifyCard = {
   trackUrl: 'https://open.spotify.com/track/4z928BtE4j1bjhcX9RU44M',
   playlistTitle: 'Code & Focus',
-  subtitle: 'A focused set for building and shipping.',
   tracks: [
     { title: 'Clean Architecture', duration: '3:42' },
     { title: 'UI Flow Session', duration: '4:10' },
