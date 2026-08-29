@@ -1,0 +1,59 @@
+.drift-wall {
+  position: relative;
+  min-height: clamp(27rem, 46vw, 38rem);
+  margin-top: 2.75rem;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 2rem;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--surface-strong) 70%, var(--accent-soft)), var(--surface));
+  box-shadow: var(--shadow);
+  isolation: isolate;
+}
+
+.drift-wall::before {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 2.6rem 2.6rem;
+  content: '';
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.75), transparent);
+}
+
+.drift-wall-hint { position: absolute; z-index: 3; right: 1.25rem; bottom: 1rem; margin: 0; color: var(--muted); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+.drift-wall-glow { position: absolute; z-index: -1; width: 17rem; height: 17rem; border-radius: 50%; filter: blur(32px); opacity: 0.42; transition: transform 300ms ease-out; }
+.drift-wall-glow-one { top: -6rem; left: 4%; background: #9186ff; transform: translate(var(--pointer-x), var(--pointer-y)); }
+.drift-wall-glow-two { right: -7rem; bottom: -9rem; background: #62cfbd; transform: translate(calc(var(--pointer-x) * -1), calc(var(--pointer-y) * -1)); }
+.drift-wall-grid { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-content: center; justify-items: center; gap: clamp(1rem, 4vw, 4rem); padding: 2.5rem clamp(1rem, 5vw, 5rem); perspective: 800px; }
+.drift-card { width: min(100%, 23rem); overflow: hidden; border: 1px solid color-mix(in srgb, var(--line) 120%, transparent); border-radius: 1.25rem; background: color-mix(in srgb, var(--surface-strong) 85%, transparent); box-shadow: 0 20px 35px rgba(55, 62, 112, 0.17); transform: translate3d(var(--card-x), var(--card-y), 0) rotate(var(--card-rotate)); transition: transform 280ms ease, box-shadow 280ms ease; animation: drift-card 7s var(--drift-delay) ease-in-out infinite alternate; backdrop-filter: blur(18px); }
+.drift-card:hover { z-index: 2; box-shadow: 0 28px 48px rgba(55, 62, 112, 0.25); animation-play-state: paused; transform: translate3d(calc(var(--card-x) + var(--pointer-x)), calc(var(--card-y) + var(--pointer-y) - 0.4rem), 2rem) rotate(0deg) !important; }
+.drift-card-media { display: grid; min-height: 8.5rem; overflow: hidden; border-bottom: 1px solid var(--line); color: var(--accent); background: linear-gradient(135deg, color-mix(in srgb, var(--accent-soft) 90%, transparent), rgba(102, 207, 189, 0.25)); place-content: center; text-align: center; }
+.drift-card-media img { width: 100%; height: 100%; object-fit: cover; }
+.drift-card-media span { font-size: 1.9rem; }
+.drift-card-media p { margin: 0.3rem 0 0; color: var(--muted); font-size: 0.72rem; font-weight: 700; }
+.drift-card-content { padding: 1.1rem; }
+.drift-card-content h3 { margin: 0; font-size: 1.15rem; letter-spacing: -0.04em; }
+.drift-card-content > p:not(.project-number) { min-height: 2.8rem; margin: 0.55rem 0 0.85rem; color: var(--muted); font-size: 0.83rem; line-height: 1.55; }
+.drift-card-content .project-number { margin-bottom: 0.45rem; }
+.drift-card-content .tag-list { gap: 0.35rem; }
+.drift-card-content .tag-list li { padding: 0.3rem 0.45rem; font-size: 0.65rem; }
+.project-links { display: flex; flex-wrap: wrap; gap: 0.7rem; margin-top: 1rem; }
+.project-links a { color: var(--accent); font-size: 0.75rem; font-weight: 800; text-decoration: none; }
+.project-links a:hover { text-decoration: underline; }
+
+@keyframes drift-card {
+  from { transform: translate3d(var(--card-x), var(--card-y), 0) rotate(var(--card-rotate)); }
+  to { transform: translate3d(calc(var(--card-x) + 0.55rem), calc(var(--card-y) - 0.75rem), 0) rotate(calc(var(--card-rotate) + 1.5deg)); }
+}
+
+@media (max-width: 680px) {
+  .drift-wall { min-height: 42rem; }
+  .drift-wall-grid { grid-template-columns: 1fr; align-content: start; gap: 1.1rem; padding: 2.2rem 2.2rem 3.5rem; }
+  .drift-card { width: 100%; }
+  .drift-card:nth-child(even) { transform: translate3d(var(--card-x), var(--card-y), 0) rotate(calc(var(--card-rotate) * -0.55)); }
+  .drift-wall-hint { left: 1rem; right: auto; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .drift-card { animation: none; }
+}
