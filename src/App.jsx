@@ -8,7 +8,7 @@ const WELCOME_SESSION_KEY = 'chad-portfolio-welcome-seen';
 const THEME_STORAGE_KEY = 'chad-portfolio-theme';
 const backgroundAudioSrc = import.meta.env.VITE_BACKGROUND_AUDIO_URL ?? '';
 const clickAudioSrc = '/mascot/sounds/click.mp3';
-const mascotSrc = '/mascot/chad-mascot.webp';
+const mascotSrc = '/mascot/chad-mascot.png';
 const chatMascotSrc = '/mascot/chatmascot.webp';
 
 function App() {
@@ -19,6 +19,7 @@ function App() {
   const [isMuted, setIsMuted] = useState(false);
   const [theme, setTheme] = useState(() => localStorage.getItem(THEME_STORAGE_KEY) ?? 'light');
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isHeroDocked, setIsHeroDocked] = useState(false);
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
@@ -47,6 +48,32 @@ function App() {
     revealTargets.forEach((target) => observer.observe(target));
     return () => observer.disconnect();
   }, [hasEntered]);
+
+  useEffect(() => {
+    const desktopViewport = window.matchMedia('(min-width: 901px)');
+    let animationFrame;
+
+    const updateHeroPosition = () => {
+      const shouldDock = desktopViewport.matches && window.scrollY > 48;
+      setIsHeroDocked((currentState) => currentState === shouldDock ? currentState : shouldDock);
+      animationFrame = undefined;
+    };
+    const scheduleHeroPosition = () => {
+      if (!animationFrame) animationFrame = window.requestAnimationFrame(updateHeroPosition);
+    };
+
+    updateHeroPosition();
+    window.addEventListener('scroll', scheduleHeroPosition, { passive: true });
+    window.addEventListener('resize', scheduleHeroPosition);
+    desktopViewport.addEventListener('change', scheduleHeroPosition);
+
+    return () => {
+      window.removeEventListener('scroll', scheduleHeroPosition);
+      window.removeEventListener('resize', scheduleHeroPosition);
+      desktopViewport.removeEventListener('change', scheduleHeroPosition);
+      if (animationFrame) window.cancelAnimationFrame(animationFrame);
+    };
+  }, []);
 
   useEffect(() => {
     if (!hasEntered) return undefined;
@@ -152,12 +179,14 @@ function App() {
         </button>
       </aside>
 
-      <main id="top">
-        <Hero onButtonClick={playClickSound} />
-        <About />
-        <Projects />
-        <Experience />
-        <Contact />
+      <main id="top" className={isHeroDocked ? 'portfolio-layout hero-is-docked' : 'portfolio-layout'}>
+        <Hero isDocked={isHeroDocked} onButtonClick={playClickSound} />
+        <div className="portfolio-content">
+          <About />
+          <Projects />
+          <Experience />
+          <Contact />
+        </div>
       </main>
 
       {hasEntered && (
@@ -274,7 +303,7 @@ function WelcomeScreen({ isLeaving, onButtonClick, onChoose }) {
   );
 }
 
-function Hero({ onButtonClick }) {
+function Hero({ isDocked, onButtonClick }) {
   const [hasMascotImage, setHasMascotImage] = useState(true);
 
   function scrollToSection(sectionId) {
@@ -282,7 +311,7 @@ function Hero({ onButtonClick }) {
   }
 
   return (
-    <section id="top" className="hero hero-centered section" aria-labelledby="hero-title">
+    <section id="top" className={isDocked ? 'hero hero-centered section is-docked' : 'hero hero-centered section'} aria-labelledby="hero-title">
       <div className="hero-glass-card" aria-hidden="true" />
       <div className={hasMascotImage ? 'mascot-frame has-mascot-image' : 'mascot-frame'}>
         {hasMascotImage ? <img src={mascotSrc} alt="Chad's mascot" onError={() => setHasMascotImage(false)} /> : (
@@ -345,8 +374,8 @@ function Hero({ onButtonClick }) {
 
 function About() {
   return (
-    <section id="about" className="section about-section magnetic-bento" aria-labelledby="about-title">
-      <div className="about-quote glass-panel magnetic-bento-card">
+    <section id="about" className="section about-section" aria-labelledby="about-title">
+      <div className="about-quote glass-panel">
         <span className="quote-mark quote-mark-open" aria-hidden="true">“</span>
         <div>
           <p className="eyebrow">01 · about</p>
@@ -355,14 +384,6 @@ function About() {
         </div>
         <span className="quote-mark quote-mark-close" aria-hidden="true">”</span>
       </div>
-      <article className="about-bento-note glass-panel magnetic-bento-card">
-        <span aria-hidden="true">✦</span>
-        <p>Human-centered</p>
-      </article>
-      <article className="about-bento-orb glass-panel magnetic-bento-card">
-        <span aria-hidden="true" />
-        <p>Useful systems</p>
-      </article>
     </section>
   );
 }
@@ -447,15 +468,13 @@ function ExperienceCategory({ item }) {
 
 function Contact() {
   return (
-    <section id="contact" className="section contact-section magnetic-bento" aria-labelledby="contact-title">
-      <div className="contact-card glass-panel magnetic-bento-card">
+    <section id="contact" className="section contact-section" aria-labelledby="contact-title">
+      <div className="contact-card glass-panel">
         <p className="eyebrow">04 · get in touch</p>
         <h2 id="contact-title">Let&apos;s make something meaningful.</h2>
         <p>I&apos;m always open to conversations about AI engineering, creative technology, and opportunities to grow.</p>
         {contactLinks.length > 0 ? <div className="contact-links">{contactLinks.map((link) => <a key={link.label} href={link.href}>{link.label} <span>↗</span></a>)}</div> : <p className="contact-placeholder">Contact links will be added here soon.</p>}
       </div>
-      <article className="contact-bento-topic glass-panel magnetic-bento-card">AI engineering</article>
-      <article className="contact-bento-topic glass-panel magnetic-bento-card">Creative technology</article>
     </section>
   );
 }
