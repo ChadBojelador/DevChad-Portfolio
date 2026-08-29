@@ -13,8 +13,8 @@
   border: none;
   border-radius: var(--sb-radius);
   color: var(--sb-text-color);
-  background: color-mix(in srgb, var(--sb-tint) calc(var(--sb-tint-opacity) * 100%), transparent);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 10px 24px rgba(17, 118, 190, 0.2);
+  background: transparent;
+  box-shadow: 0 10px 24px rgba(17, 118, 190, 0.12);
   backdrop-filter: blur(var(--sb-blur));
   -webkit-backdrop-filter: blur(var(--sb-blur));
   cursor: pointer;
@@ -39,8 +39,8 @@
 .specular-button__fx canvas { display: block; width: 100%; height: 100%; }
 .specular-button__label { position: relative; z-index: 2; }
 
-.brand-specular-button--primary { background: linear-gradient(135deg, #1788de, #0768b9); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28), 0 12px 24px rgba(20, 126, 210, 0.24); }
-.brand-specular-button--soft { color: #f9fdff; background: linear-gradient(135deg, #137bcb, #05589f); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 12px 24px rgba(20, 126, 210, 0.18); }
+.brand-specular-button--primary { box-shadow: 0 12px 24px rgba(20, 126, 210, 0.14); }
+.brand-specular-button--soft { color: #f9fdff; box-shadow: 0 12px 24px rgba(20, 126, 210, 0.11); }
 
 @media (prefers-reduced-motion: reduce) {
   .specular-button { transition: none; }

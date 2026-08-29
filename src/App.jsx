@@ -48,6 +48,29 @@ function App() {
     return () => observer.disconnect();
   }, [hasEntered]);
 
+  useEffect(() => {
+    if (!hasEntered) return undefined;
+
+    const bentoTargets = document.querySelectorAll('.magnetic-bento');
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (reduceMotion || !('IntersectionObserver' in window)) {
+      bentoTargets.forEach((target) => target.classList.add('is-settled'));
+      return undefined;
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('is-settled');
+        observer.unobserve(entry.target);
+      });
+    }, { threshold: 0.18 });
+
+    bentoTargets.forEach((target) => observer.observe(target));
+    return () => observer.disconnect();
+  }, [hasEntered]);
+
   function playClickSound() {
     const clickAudio = clickAudioRef.current;
     if (!clickAudio) return;
@@ -86,6 +109,16 @@ function App() {
 
   return (
     <div className="site-shell">
+      <div className="liquid-background" aria-hidden="true">
+        <div className="liquid-background-stage">
+          <span className="liquid-blob liquid-blob-one" />
+          <span className="liquid-blob liquid-blob-two" />
+          <span className="liquid-blob liquid-blob-three" />
+          <span className="liquid-blob liquid-blob-four" />
+          <span className="liquid-blob liquid-blob-five" />
+        </div>
+        <div className="liquid-background-noise" />
+      </div>
       {backgroundAudioSrc && <audio ref={audioRef} loop src={backgroundAudioSrc} />}
       <audio ref={clickAudioRef} preload="auto" src={clickAudioSrc} />
 
@@ -198,7 +231,7 @@ function WelcomeScreen({ isLeaving, onButtonClick, onChoose }) {
             size="md"
             radius={16}
             tint="#1686dd"
-            tintOpacity={0.9}
+            tintOpacity={0}
             blur={8}
             lineColor="#d5f0ff"
             baseColor="#075ca9"
@@ -219,7 +252,7 @@ function WelcomeScreen({ isLeaving, onButtonClick, onChoose }) {
             size="md"
             radius={16}
             tint="#0c6eba"
-            tintOpacity={0.8}
+            tintOpacity={0}
             blur={8}
             lineColor="#bde9ff"
             baseColor="#064b8a"
@@ -250,14 +283,7 @@ function Hero({ onButtonClick }) {
 
   return (
     <section id="top" className="hero hero-centered section" aria-labelledby="hero-title">
-      <div className="hero-bubbles" aria-hidden="true">
-        <span className="hero-bubble hero-bubble-one" />
-        <span className="hero-bubble hero-bubble-two" />
-        <span className="hero-bubble hero-bubble-three" />
-        <span className="hero-bubble hero-bubble-four" />
-        <span className="hero-bubble hero-bubble-five" />
-        <span className="hero-bubble hero-bubble-six" />
-      </div>
+      <div className="hero-glass-card" aria-hidden="true" />
       <div className={hasMascotImage ? 'mascot-frame has-mascot-image' : 'mascot-frame'}>
         {hasMascotImage ? <img src={mascotSrc} alt="Chad's mascot" onError={() => setHasMascotImage(false)} /> : (
           <div className="mascot-placeholder" aria-label="Mascot image placeholder">
@@ -276,7 +302,7 @@ function Hero({ onButtonClick }) {
             size="md"
             radius={16}
             tint="#1686dd"
-            tintOpacity={0.92}
+            tintOpacity={0}
             blur={8}
             lineColor="#d5f0ff"
             baseColor="#075ca9"
@@ -296,7 +322,7 @@ function Hero({ onButtonClick }) {
             size="md"
             radius={16}
             tint="#0c6eba"
-            tintOpacity={0.84}
+            tintOpacity={0}
             blur={10}
             lineColor="#bde9ff"
             baseColor="#064b8a"
@@ -319,8 +345,8 @@ function Hero({ onButtonClick }) {
 
 function About() {
   return (
-    <section id="about" className="section about-section" aria-labelledby="about-title">
-      <div className="about-quote glass-panel scroll-reveal">
+    <section id="about" className="section about-section magnetic-bento" aria-labelledby="about-title">
+      <div className="about-quote glass-panel magnetic-bento-card">
         <span className="quote-mark quote-mark-open" aria-hidden="true">“</span>
         <div>
           <p className="eyebrow">01 · about</p>
@@ -329,48 +355,107 @@ function About() {
         </div>
         <span className="quote-mark quote-mark-close" aria-hidden="true">”</span>
       </div>
+      <article className="about-bento-note glass-panel magnetic-bento-card">
+        <span aria-hidden="true">✦</span>
+        <p>Human-centered</p>
+      </article>
+      <article className="about-bento-orb glass-panel magnetic-bento-card">
+        <span aria-hidden="true" />
+        <p>Useful systems</p>
+      </article>
     </section>
   );
 }
 
 function Projects() {
   return (
-    <section id="projects" className="section" aria-labelledby="projects-title">
+    <section id="projects" className="section magnetic-bento" aria-labelledby="projects-title">
       <SectionIntro eyebrow="02 · selected work" title="Projects in motion." description="Drag through the wall to explore the product stories as they take shape." />
-      <div className="scroll-reveal scroll-reveal-delay">
+      <div className="projects-bento-wall magnetic-bento-card">
         <DriftWall projects={projects} />
       </div>
+      <article className="projects-bento-note glass-panel magnetic-bento-card">
+        <span aria-hidden="true">✦</span>
+        <p>Product stories</p>
+      </article>
+      <article className="projects-bento-status glass-panel magnetic-bento-card">
+        <span aria-hidden="true" />
+        <p>Always learning</p>
+      </article>
     </section>
   );
 }
 
 function Experience() {
   return (
-    <section id="experience" className="section" aria-labelledby="experience-title">
+    <section id="experience" className="section magnetic-bento" aria-labelledby="experience-title">
       <SectionIntro eyebrow="03 · learning in public" title="The early chapters." description="Hackathons, certifications, and milestones will live here as they take shape." />
-      <ol className="timeline scroll-reveal scroll-reveal-delay">
-        {experienceItems.map((item) => <li key={item.title} className="timeline-item">
-          <span className="timeline-dot" />
-          <article className="timeline-card glass-panel">
-            <p className="panel-label">{item.type}</p>
-            <h3>{item.title}</h3>
-            <p>{item.description}</p>
-          </article>
-        </li>)}
-      </ol>
+      <div className="experience-categories">
+        {experienceItems.map((item) => <ExperienceCategory key={item.title} item={item} />)}
+      </div>
     </section>
+  );
+}
+
+function ExperienceCategory({ item }) {
+  const galleryRef = useRef(null);
+
+  function scrollGallery(direction) {
+    const gallery = galleryRef.current;
+    if (!gallery) return;
+
+    gallery.scrollBy({
+      left: direction * Math.min(gallery.clientWidth * 0.84, 620),
+      behavior: 'smooth',
+    });
+  }
+
+  return (
+    <article className="experience-category glass-panel magnetic-bento-card">
+      <div className="experience-category-heading">
+        <div>
+          <p className="panel-label">{item.type}</p>
+          <h3>{item.title}</h3>
+          <p>{item.description}</p>
+        </div>
+        <div className="experience-gallery-controls" aria-label={`${item.title} gallery controls`}>
+          <button className="gallery-control" type="button" onClick={() => scrollGallery(-1)} aria-label={`Show previous ${item.title} picture`}>
+            <span aria-hidden="true">←</span>
+          </button>
+          <button className="gallery-control" type="button" onClick={() => scrollGallery(1)} aria-label={`Show next ${item.title} picture`}>
+            <span aria-hidden="true">→</span>
+          </button>
+        </div>
+      </div>
+      <div className="experience-gallery" role="region" aria-label={`${item.title} picture gallery`}>
+        <div className="experience-gallery-track" ref={galleryRef} tabIndex="0">
+          {item.images.map((image, index) => (
+            <figure key={image.src} className="experience-gallery-slide">
+              <img src={image.src} alt={image.alt} loading="lazy" />
+              <figcaption>
+                <span>{image.label}</span>
+                <span>{String(index + 1).padStart(2, '0')} / {String(item.images.length).padStart(2, '0')}</span>
+              </figcaption>
+            </figure>
+          ))}
+        </div>
+        <p className="experience-gallery-hint">Swipe to explore <span aria-hidden="true">→</span></p>
+      </div>
+    </article>
   );
 }
 
 function Contact() {
   return (
-    <section id="contact" className="section contact-section" aria-labelledby="contact-title">
-      <div className="contact-card glass-panel scroll-reveal">
+    <section id="contact" className="section contact-section magnetic-bento" aria-labelledby="contact-title">
+      <div className="contact-card glass-panel magnetic-bento-card">
         <p className="eyebrow">04 · get in touch</p>
         <h2 id="contact-title">Let&apos;s make something meaningful.</h2>
         <p>I&apos;m always open to conversations about AI engineering, creative technology, and opportunities to grow.</p>
         {contactLinks.length > 0 ? <div className="contact-links">{contactLinks.map((link) => <a key={link.label} href={link.href}>{link.label} <span>↗</span></a>)}</div> : <p className="contact-placeholder">Contact links will be added here soon.</p>}
       </div>
+      <article className="contact-bento-topic glass-panel magnetic-bento-card">AI engineering</article>
+      <article className="contact-bento-topic glass-panel magnetic-bento-card">Creative technology</article>
     </section>
   );
 }
