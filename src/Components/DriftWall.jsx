@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import '../Styles/DriftWall.css';
 
 const cardPlacements = [
@@ -8,8 +8,41 @@ const cardPlacements = [
   { x: 23, y: 15, rotate: -5, delay: '-1.1s' },
 ];
 
-function DriftWall({ projects }) {
+function ProjectStoryDialog({ project, onClose }) {
+  useEffect(() => {
+    const closeOnEscape = (event) => {
+      if (event.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', closeOnEscape);
+    return () => window.removeEventListener('keydown', closeOnEscape);
+  }, [onClose]);
+
+  return (
+    <div className="project-story-dialog-backdrop" role="presentation" onMouseDown={onClose}>
+      <article className={project.image ? 'project-story-dialog' : 'project-story-dialog project-story-dialog--no-image'} role="dialog" aria-modal="true" aria-label={`${project.title || 'Project'} details`} onMouseDown={(event) => event.stopPropagation()}>
+        <button className="project-story-dialog-close" type="button" onClick={onClose} aria-label="Close project details">×</button>
+        {project.image && <img className="project-story-dialog-image" src={project.image} alt={`${project.title || 'Project'} preview`} />}
+        <div className="project-story-dialog-copy">
+          {project.number && <p className="project-number">{project.number}</p>}
+          <h2>{project.title || 'Untitled project'}</h2>
+          <p>{project.details || project.summary}</p>
+          {project.stack?.length > 0 && <ul className="tag-list">{project.stack.map((item) => <li key={item}>{item}</li>)}</ul>}
+          {(project.github || project.liveDemo || project.caseStudy) && (
+            <div className="project-links">
+              {project.github && <a href={project.github} target="_blank" rel="noreferrer">GitHub ↗</a>}
+              {project.liveDemo && <a href={project.liveDemo} target="_blank" rel="noreferrer">Live demo ↗</a>}
+              {project.caseStudy && <a href={project.caseStudy} target="_blank" rel="noreferrer">Case study ↗</a>}
+            </div>
+          )}
+        </div>
+      </article>
+    </div>
+  );
+}
+
+function DriftWall({ projects, interactive = false }) {
   const [pointer, setPointer] = useState({ x: 0, y: 0 });
+  const [activeProject, setActiveProject] = useState(null);
 
   function updatePointer(event) {
     const bounds = event.currentTarget.getBoundingClientRect();
@@ -34,8 +67,18 @@ function DriftWall({ projects }) {
           const placement = cardPlacements[index % cardPlacements.length];
           return (
             <article
-              className="drift-card"
+              className={interactive ? 'drift-card is-interactive' : 'drift-card'}
               key={project.id || project.title}
+              role={interactive ? 'button' : undefined}
+              tabIndex={interactive ? 0 : undefined}
+              aria-label={interactive ? `Open ${project.title || 'project'} details` : undefined}
+              onClick={interactive ? () => setActiveProject(project) : undefined}
+              onKeyDown={interactive ? (event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault();
+                  setActiveProject(project);
+                }
+              } : undefined}
               style={{
                 '--card-x': `${placement.x}px`,
                 '--card-y': `${placement.y}px`,
@@ -52,16 +95,17 @@ function DriftWall({ projects }) {
                 <h3>{project.title}</h3>
                 <p>{project.summary}</p>
                 <ul className="tag-list">{project.stack.map((item) => <li key={item}>{item}</li>)}</ul>
-                {(project.github || project.liveDemo || project.caseStudy) ? <div className="project-links">
+                {interactive ? <span className="project-story-open">View project story <span aria-hidden="true">→</span></span> : (project.github || project.liveDemo || project.caseStudy) ? <div className="project-links">
                   {project.github && <a href={project.github}>GitHub ↗</a>}
                   {project.liveDemo && <a href={project.liveDemo}>Live demo ↗</a>}
                   {project.caseStudy && <a href={project.caseStudy}>Case study ↗</a>}
-                </div> : <span className="coming-soon">Details coming soon</span>}
+                </div> : <span className="coming-soon">Details coming soon</span>)}
               </div>
             </article>
           );
         })}
       </div>
+      {activeProject && <ProjectStoryDialog project={activeProject} onClose={() => setActiveProject(null)} />}
     </div>
   );
 }

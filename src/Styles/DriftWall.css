@@ -28,6 +28,8 @@
 .drift-card { width: min(100%, 23rem); overflow: hidden; border: 1px solid color-mix(in srgb, var(--line) 120%, transparent); border-radius: 1.25rem; background: color-mix(in srgb, var(--surface-strong) 85%, transparent); box-shadow: 0 20px 35px var(--glow-blue); transform: translate3d(var(--card-x), var(--card-y), 0) rotate(var(--card-rotate)); transition: transform 280ms ease, box-shadow 280ms ease; backdrop-filter: blur(18px); }
 .drift-wall:hover .drift-card { animation: drift-card 7s var(--drift-delay) ease-in-out infinite alternate; }
 .drift-card:hover { z-index: 2; box-shadow: 0 28px 48px var(--glow-purple); animation-play-state: paused; transform: translate3d(calc(var(--card-x) + var(--pointer-x)), calc(var(--card-y) + var(--pointer-y) - 0.4rem), 2rem) rotate(0deg) !important; }
+.drift-card.is-interactive { cursor: pointer; }
+.drift-card.is-interactive:focus-visible { outline: 3px solid var(--focus-ring); outline-offset: 4px; }
 .drift-card-media { display: grid; min-height: 8.5rem; overflow: hidden; border-bottom: 1px solid var(--line); color: var(--accent); background: linear-gradient(135deg, color-mix(in srgb, var(--accent-soft) 90%, transparent), var(--glow-teal)); place-content: center; text-align: center; }
 .drift-card-media img { width: 100%; height: 100%; object-fit: cover; }
 .drift-card-media span { font-size: 1.9rem; }
@@ -41,6 +43,20 @@
 .project-links { display: flex; flex-wrap: wrap; gap: 0.7rem; margin-top: 1rem; }
 .project-links a { color: var(--accent); font-size: 0.75rem; font-weight: 800; text-decoration: none; }
 .project-links a:hover { text-decoration: underline; }
+.project-story-open { display: inline-flex; align-items: center; gap: 0.35rem; margin-top: 1rem; color: var(--accent); font-size: 0.75rem; font-weight: 850; }
+.project-story-open span { transition: transform 180ms ease; }
+.drift-card.is-interactive:hover .project-story-open span { transform: translateX(0.18rem); }
+
+.project-story-dialog-backdrop { position: fixed; z-index: 50; inset: 0; display: grid; padding: clamp(1rem, 4vw, 3rem); background: rgba(4, 24, 43, 0.68); place-items: center; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+.project-story-dialog { position: relative; display: grid; width: min(100%, 58rem); max-height: min(46rem, calc(100svh - 2rem)); grid-template-columns: minmax(0, 0.92fr) minmax(17rem, 1.08fr); overflow: auto; border: 1px solid color-mix(in srgb, white 46%, var(--line)); border-radius: 1.35rem; color: var(--text); background: color-mix(in srgb, var(--surface-strong) 96%, var(--background)); box-shadow: 0 28px 80px rgba(2, 22, 44, 0.46); }
+.project-story-dialog--no-image { width: min(100%, 38rem); grid-template-columns: 1fr; }
+.project-story-dialog-image { width: 100%; min-height: 100%; height: 100%; object-fit: cover; }
+.project-story-dialog-copy { padding: clamp(1.4rem, 4vw, 2.6rem); }
+.project-story-dialog-copy h2 { margin: 0; color: var(--text); font-size: clamp(1.7rem, 4vw, 2.7rem); letter-spacing: -0.065em; line-height: 0.98; }
+.project-story-dialog-copy > p:not(.project-number) { margin: 1rem 0 0; color: var(--muted); line-height: 1.6; }
+.project-story-dialog-copy .tag-list { margin-top: 1.15rem; }
+.project-story-dialog-close { position: absolute; z-index: 1; top: 0.9rem; right: 0.9rem; display: grid; width: 2.35rem; height: 2.35rem; border: 1px solid rgba(255, 255, 255, 0.58); border-radius: 50%; color: #fff; background: rgba(5, 24, 43, 0.62); cursor: pointer; font-size: 1.4rem; line-height: 1; place-items: center; }
+.project-story-dialog-close:hover { background: rgba(5, 24, 43, 0.86); }
 
 @keyframes drift-card {
   from { transform: translate3d(var(--card-x), var(--card-y), 0) rotate(var(--card-rotate)); }
@@ -53,6 +69,8 @@
   .drift-card { width: 100%; }
   .drift-card:nth-child(even) { transform: translate3d(var(--card-x), var(--card-y), 0) rotate(calc(var(--card-rotate) * -0.55)); }
   .drift-wall-hint { left: 1rem; right: auto; }
+  .project-story-dialog { grid-template-columns: 1fr; max-width: 31rem; }
+  .project-story-dialog-image { min-height: 12rem; max-height: 38svh; }
 }
 
 @media (prefers-reduced-motion: reduce) {

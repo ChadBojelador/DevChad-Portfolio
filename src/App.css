@@ -165,11 +165,16 @@
 #projects.magnetic-bento .section-intro { grid-column: 1 / -1; }
 .projects-bento-wall { grid-row: 2 / span 2; min-width: 0; }
 .projects-bento-note, .projects-bento-status { display: grid; min-height: 0; padding: clamp(0.65rem, 1.3vw, 0.9rem); overflow: hidden; place-content: stretch; }
+.projects-bento-note { grid-template-rows: minmax(0, 1fr) auto; }
 .projects-bento-note { background: linear-gradient(145deg, rgba(255, 255, 255, 0.76), rgba(187, 231, 255, 0.44)); }
 .projects-bento-note p, .projects-bento-status p { margin: 0; color: var(--text); font-size: clamp(0.78rem, 1.25vw, 0.96rem); font-weight: 800; letter-spacing: -0.035em; }
 .projects-bento-status { background: linear-gradient(145deg, rgba(219, 247, 255, 0.74), rgba(111, 199, 241, 0.35)); }
 .projects-bento-note img, .projects-bento-status img { width: 100%; min-height: 0; height: 100%; border: 1px solid color-mix(in srgb, white 56%, var(--line)); border-radius: 1rem; object-fit: cover; box-shadow: 0 10px 20px rgba(16, 117, 190, 0.11); transition: transform 450ms cubic-bezier(0.16, 1, 0.3, 1), filter 450ms ease; }
-.projects-bento-note p, .projects-bento-status p { align-self: end; padding: 0.75rem 0.35rem 0.15rem; }
+.projects-bento-note > p, .projects-bento-status > p { align-self: end; padding: 0.75rem 0.35rem 0.15rem; }
+.projects-bento-copy { padding: 0.7rem 0.35rem 0.15rem; }
+.projects-bento-copy .projects-bento-label { color: var(--accent); font-size: 0.62rem; font-weight: 850; letter-spacing: 0.08em; text-transform: uppercase; }
+.projects-bento-copy h3 { margin: 0.3rem 0 0; color: var(--text); font-size: clamp(0.95rem, 1.45vw, 1.2rem); letter-spacing: -0.05em; line-height: 1.05; }
+.projects-bento-copy > p:last-child { margin-top: 0.42rem; color: var(--muted); font-size: clamp(0.68rem, 1vw, 0.78rem); font-weight: 600; letter-spacing: normal; line-height: 1.45; }
 .projects-bento-note, .projects-bento-status { cursor: default; transition: border-color 220ms ease, box-shadow 220ms ease, transform 320ms cubic-bezier(0.16, 1, 0.3, 1); }
 .projects-bento-note:hover, .projects-bento-note:focus-within, .projects-bento-status:hover, .projects-bento-status:focus-within, #projects.magnetic-bento.is-settled .projects-bento-note:hover, #projects.magnetic-bento.is-settled .projects-bento-note:focus-within, #projects.magnetic-bento.is-settled .projects-bento-status:hover, #projects.magnetic-bento.is-settled .projects-bento-status:focus-within { border-color: color-mix(in srgb, var(--accent) 55%, var(--line)); box-shadow: 0 20px 38px rgba(16, 117, 190, 0.2); transform: translateY(-0.35rem); }
 .projects-bento-note:hover img, .projects-bento-note:focus-within img, .projects-bento-status:hover img, .projects-bento-status:focus-within img { filter: saturate(1.06); transform: scale(1.035); }

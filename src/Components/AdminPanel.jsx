@@ -60,6 +60,7 @@ function AdminPanel({ content, onChange, onClose, onReset }) {
         number: String(previous.projects.length + 1).padStart(2, '0'),
         title: 'New project',
         summary: '',
+        details: '',
         stack: [],
         image: '',
         github: '',
@@ -155,6 +156,8 @@ function AdminPanel({ content, onChange, onClose, onReset }) {
                 <Field label="Story image alt text" value={content.presentation.projects.home.storyImageAlt} onChange={(value) => updatePresentation('projects', 'home', 'storyImageAlt', value)} />
               </div>
               <Field label="Story image label" value={content.presentation.projects.home.storyLabel} onChange={(value) => updatePresentation('projects', 'home', 'storyLabel', value)} />
+              <Field label="Story card title" value={content.presentation.projects.home.storyTitle} onChange={(value) => updatePresentation('projects', 'home', 'storyTitle', value)} />
+              <Field label="Story card description" value={content.presentation.projects.home.storyDescription} onChange={(value) => updatePresentation('projects', 'home', 'storyDescription', value)} multiline />
               <div className="admin-field-grid">
                 <Field label="Learning image path or URL" value={content.presentation.projects.home.learningImage} onChange={(value) => updatePresentation('projects', 'home', 'learningImage', value)} />
                 <Field label="Learning image alt text" value={content.presentation.projects.home.learningImageAlt} onChange={(value) => updatePresentation('projects', 'home', 'learningImageAlt', value)} />
@@ -197,6 +200,7 @@ function AdminPanel({ content, onChange, onClose, onReset }) {
                   <Field label="Title" value={project.title} onChange={(value) => updateProject(project.id, 'title', value)} />
                 </div>
                 <Field label="Summary" value={project.summary} onChange={(value) => updateProject(project.id, 'summary', value)} multiline />
+                <Field label="Expanded project details" value={project.details} onChange={(value) => updateProject(project.id, 'details', value)} multiline />
                 <Field label="Image path or URL" value={project.image} onChange={(value) => updateProject(project.id, 'image', value)} placeholder="/projects/example.jpg" />
                 <Field label="Stack (comma separated)" value={project.stack.join(', ')} onChange={(value) => updateProject(project.id, 'stack', value.split(',').map((item) => item.trim()).filter(Boolean))} />
                 <div className="admin-field-grid">

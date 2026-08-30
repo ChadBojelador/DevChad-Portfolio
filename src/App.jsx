@@ -38,6 +38,8 @@ function createDefaultPresentation() {
         storyImage: '/projects/ginsight/ginsight 1.png',
         storyImageAlt: 'Ginsight product preview',
         storyLabel: 'Product stories',
+        storyTitle: 'Product stories in progress.',
+        storyDescription: 'Each story will bring together the problem, the process, and the human impact behind the work.',
         learningImage: '/Learning/asean.png',
         learningImageAlt: 'ASEAN learning certificate',
         learningLabel: 'Always learning',
@@ -922,7 +924,11 @@ function Projects({ onOpenPage, presentation, projects }) {
       </div>
       <article className="projects-bento-note glass-panel magnetic-bento-card">
         {home.storyImage && <img src={home.storyImage} alt={home.storyImageAlt || ''} loading="lazy" />}
-        <p>{home.storyLabel}</p>
+        <div className="projects-bento-copy">
+          <p className="projects-bento-label">{home.storyLabel}</p>
+          <h3>{home.storyTitle}</h3>
+          <p>{home.storyDescription}</p>
+        </div>
       </article>
       <article className="projects-bento-status glass-panel magnetic-bento-card">
         {home.learningImage && <img src={home.learningImage} alt={home.learningImageAlt || ''} loading="lazy" />}
@@ -1048,7 +1054,7 @@ function ProductStoriesPage({ onBack, presentation, projects }) {
           </div>
         </article>
         <div className="product-stories-wall">
-          <DriftWall projects={projects} />
+          <DriftWall projects={projects} interactive />
         </div>
       </section>
     </div>
