@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>GInsights — GLoan Negosyo Risk Advisor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* ---- GCash palette ---- */
+    --g-blue:#007DFE;
+    --g-blue-dark:#0057D2;
+    --g-blue-deep:#0040A8;
+    --g-blue-navy:#00286B;
+    --g-blue-sky:#4FA9FF;
+    --g-blue-100:#E5F1FF;
+    --g-blue-050:#F2F8FF;
+
+    --g-green:#00A862;
+    --g-green-100:#E1F7EC;
+    --g-green-text:#007343;
+
+    --g-amber:#F5A623;
+    --g-amber-100:#FFF4E0;
+    --g-amber-text:#9A6206;
+
+    --g-red:#E8483C;
+    --g-red-100:#FFECEA;
+    --g-red-text:#A32B22;
+
+    --ink-900:#101828;
+    --ink-700:#3D4657;
+    --ink-500:#697586;
+    --ink-300:#98A2B3;
+    --line:#EAEEF4;
+    --surface:#FFFFFF;
+    --surface-alt:#F5F8FC;
+
+    --r-xl:20px;
+    --r-lg:16px;
+    --r-md:12px;
+    --r-pill:100px;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'Poppins',-apple-system,sans-serif;
+    background:radial-gradient(circle at 25% 0%, #E9F2FD 0%, transparent 50%), #DFE5EE;
+    min-height:100vh;
+    display:flex; align-items:center; justify-content:center;
+    padding:28px 12px;
+  }
+  .device{
+    width:390px; height:844px;
+    background:var(--surface);
+    border-radius:44px; overflow:hidden; position:relative;
+    box-shadow:0 40px 80px -25px rgba(0,40,107,0.35), 0 0 0 10px #0d1420, 0 0 0 12px #2a3240;
+  }
+  .screen{height:100%; display:flex; flex-direction:column; position:relative;}
+
+  /* ---------- status + nav ---------- */
+  .statusbar{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:15px 24px 2px;
+    font-weight:600; font-size:14px; color:#fff;
+    flex-shrink:0; background:var(--g-blue);
+  }
+  .statusbar .icons{display:flex; gap:5px; align-items:center;}
+
+  .topnav{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:6px 16px 14px; background:var(--g-blue); flex-shrink:0;
+  }
+  .nav-btn{
+    width:34px; height:34px; border-radius:50%;
+    background:rgba(255,255,255,0.16);
+    display:flex; align-items:center; justify-content:center;
+    color:#fff; cursor:pointer;
+  }
+  .nav-title{
+    display:flex; align-items:center; gap:8px;
+    font-weight:600; font-size:16px; color:#fff;
+  }
+  .g-mark{
+    width:24px; height:24px; border-radius:50%;
+    background:#fff; color:var(--g-blue);
+    font-weight:700; font-size:14px;
+    display:flex; align-items:center; justify-content:center;
+  }
+
+  .scroll{flex:1; overflow-y:auto; padding-bottom:120px; scrollbar-width:none; background:var(--surface-alt);}
+  .scroll::-webkit-scrollbar{display:none;}
+
+  /* ---------- hero ---------- */
+  .hero{
+    padding:4px 20px 26px;
+    background:linear-gradient(160deg, var(--g-blue) 0%, var(--g-blue-dark) 58%, var(--g-blue-deep) 100%);
+    border-radius:0 0 24px 24px;
+    position:relative; overflow:hidden;
+  }
+  .hero::after{
+    content:""; position:absolute; right:-50px; top:-70px;
+    width:200px; height:200px; border-radius:50%;
+    background:radial-gradient(circle, rgba(255,255,255,0.14), transparent 70%);
+  }
+  .hero-eyebrow{
+    font-size:11px; font-weight:600; letter-spacing:0.08em; text-transform:uppercase;
+    color:rgba(255,255,255,0.72); margin-bottom:6px;
+  }
+  .hero-title{font-weight:600; font-size:19px; line-height:1.3; color:#fff; margin:0 0 20px; max-width:245px;}
+
+  .amount-row{display:flex; align-items:center; gap:16px; position:relative; z-index:1;}
+  .ring-wrap{position:relative; width:62px; height:62px; flex-shrink:0;}
+  .ring-wrap svg{transform:rotate(-90deg);}
+  .ring-track{stroke:rgba(255,255,255,0.22);}
+  .ring-fill{stroke:#fff; stroke-linecap:round; transition:stroke-dashoffset .4s ease, stroke .4s ease;}
+  .ring-center{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    font-weight:700; font-size:15px; color:#fff;
+  }
+  .amount-field{flex:1; display:flex; flex-direction:column; border-bottom:2px solid rgba(255,255,255,0.4); padding-bottom:7px;}
+  .amount-field label{font-size:11px; color:rgba(255,255,255,0.75); font-weight:500; margin-bottom:1px;}
+  .amount-input-row{display:flex; align-items:baseline; gap:3px;}
+  .peso-sign{font-weight:600; font-size:22px; color:#fff;}
+  #amountInput{
+    font-family:'Poppins',sans-serif; font-weight:700; font-size:31px; color:#fff;
+    background:transparent; border:none; outline:none; width:100%; padding:0;
+    font-variant-numeric:tabular-nums;
+  }
+  #amountInput::placeholder{color:rgba(255,255,255,0.45);}
+  .risk-caption{margin-top:5px; font-size:11.5px; font-weight:500; color:rgba(255,255,255,0.92); display:flex; align-items:center; gap:6px;}
+  .risk-dot{width:7px; height:7px; border-radius:50%; background:#fff;}
+
+  /* ---------- amount slider ---------- */
+  .slider-wrap{margin-top:16px; position:relative; z-index:1;}
+  .slider-scale{display:flex; justify-content:space-between; font-size:10px; font-weight:500; color:rgba(255,255,255,0.6); margin-top:6px;}
+  #amountSlider{
+    -webkit-appearance:none; appearance:none;
+    width:100%; height:6px; border-radius:6px;
+    background:rgba(255,255,255,0.28);
+    outline:none; margin:0; display:block;
+    cursor:pointer;
+  }
+  #amountSlider::-webkit-slider-runnable-track{height:6px; border-radius:6px; background:transparent;}
+  #amountSlider::-webkit-slider-thumb{
+    -webkit-appearance:none; appearance:none;
+    width:22px; height:22px; border-radius:50%;
+    background:#fff; box-shadow:0 3px 8px rgba(0,40,107,0.45), 0 0 0 4px rgba(255,255,255,0.25);
+    margin-top:-8px; cursor:pointer; transition:box-shadow .15s ease;
+  }
+  #amountSlider:active::-webkit-slider-thumb{box-shadow:0 3px 8px rgba(0,40,107,0.45), 0 0 0 6px rgba(255,255,255,0.35);}
+  #amountSlider::-moz-range-track{height:6px; border-radius:6px; background:rgba(255,255,255,0.28);}
+  #amountSlider::-moz-range-thumb{
+    width:22px; height:22px; border-radius:50%; border:none;
+    background:#fff; box-shadow:0 3px 8px rgba(0,40,107,0.45), 0 0 0 4px rgba(255,255,255,0.25);
+    cursor:pointer;
+  }
+
+  /* ---------- recommended amount note ---------- */
+  .rec-note{
+    margin-top:18px; position:relative; z-index:1;
+    background:#fff; border-radius:var(--r-lg);
+    padding:13px 14px; display:flex; align-items:center; gap:12px;
+    box-shadow:0 8px 20px -10px rgba(0,40,107,0.45);
+    border-left:4px solid var(--g-green);
+    cursor:pointer; transition:transform .15s ease;
+  }
+  .rec-note:active{transform:scale(0.985);}
+  .rec-note.in-range{border-left-color:var(--g-green); cursor:default;}
+  .rec-check{
+    width:30px; height:30px; border-radius:50%; flex-shrink:0;
+    background:var(--g-green-100); display:flex; align-items:center; justify-content:center;
+  }
+  .rec-note-body{flex:1; min-width:0;}
+  .rec-note-label{font-size:10.5px; font-weight:600; color:var(--g-green); letter-spacing:0.03em; text-transform:uppercase; margin-bottom:1px;}
+  .rec-note-amt{font-weight:700; font-size:19px; color:var(--ink-900); font-variant-numeric:tabular-nums; line-height:1.2;}
+  .rec-note-sub{font-size:10.5px; color:var(--ink-500); font-weight:400; margin-top:2px; line-height:1.4;}
+  .rec-apply{
+    flex-shrink:0; font-size:11.5px; font-weight:600; color:var(--g-blue);
+    background:var(--g-blue-100); padding:7px 12px; border-radius:var(--r-pill);
+  }
+  .rec-note.in-range .rec-apply{display:none;}
+
+  /* ---------- trust + helper ---------- */
+  .trust-strip{
+    margin:14px 16px 0; padding:10px 12px;
+    background:var(--g-blue-050); border:1px solid var(--g-blue-100);
+    border-radius:var(--r-md);
+    display:flex; align-items:flex-start; gap:9px;
+    font-size:10.5px; line-height:1.5; color:var(--ink-500); font-weight:400;
+  }
+  .trust-strip b{color:var(--ink-700); font-weight:600;}
+  .trust-strip svg{flex-shrink:0; margin-top:1px;}
+
+  .helper-text{margin:12px 18px 0; font-size:12px; line-height:1.55; color:var(--ink-500); font-weight:400;}
+  .helper-text b{color:var(--ink-700); font-weight:600;}
+
+  /* ---------- section ---------- */
+  .section-head{margin:24px 18px 12px;}
+  .section-eyebrow{font-size:10.5px; font-weight:600; letter-spacing:0.07em; text-transform:uppercase; color:var(--g-blue); margin-bottom:2px;}
+  .section-title{font-weight:600; font-size:18px; color:var(--ink-900);}
+
+  /* ---------- cards ---------- */
+  .cards{padding:0 16px; display:flex; flex-direction:column; gap:12px;}
+  .card{
+    background:var(--surface); border:1px solid var(--line);
+    border-radius:var(--r-xl); padding:16px;
+    box-shadow:0 6px 18px -14px rgba(16,24,40,0.4);
+  }
+  .card-top{display:flex; align-items:flex-start; gap:12px; cursor:pointer;}
+  .card-icon{width:38px; height:38px; border-radius:var(--r-md); flex-shrink:0; display:flex; align-items:center; justify-content:center;}
+  .card-body{flex:1; min-width:0;}
+  .card-q{font-weight:600; font-size:14.5px; color:var(--ink-900); margin-bottom:1px;}
+  .card-sub{font-size:11px; color:var(--ink-300); font-weight:400;}
+  .chevron{width:20px; height:20px; flex-shrink:0; color:var(--ink-300); transition:transform .25s ease; margin-top:8px;}
+  .card.expanded .chevron{transform:rotate(180deg);}
+
+  .badge{display:inline-flex; align-items:center; gap:5px; padding:5px 11px; border-radius:var(--r-pill); font-size:11.5px; font-weight:600;}
+  .badge .dot{width:6px; height:6px; border-radius:50%;}
+  .badge.low{background:var(--g-green-100); color:var(--g-green-text);}
+  .badge.moderate{background:var(--g-amber-100); color:var(--g-amber-text);}
+  .badge.high{background:var(--g-red-100); color:var(--g-red-text);}
+
+  .metric-row{display:flex; justify-content:space-between; align-items:flex-end; margin-top:14px;}
+  .metric-num{font-weight:700; font-size:20px; color:var(--ink-900); font-variant-numeric:tabular-nums;}
+  .metric-label{font-size:10.5px; color:var(--ink-300); font-weight:400; margin-top:1px;}
+  .metric-block{display:flex; flex-direction:column;}
+  .metric-block.right{align-items:flex-end; text-align:right;}
+
+  .progress-track{margin-top:11px; height:8px; border-radius:8px; background:var(--surface-alt); overflow:hidden;}
+  .progress-fill{height:100%; border-radius:8px; transition:width .35s ease, background .35s ease;}
+
+  .expand-panel{max-height:0; overflow:hidden; transition:max-height .3s ease;}
+  .card.expanded .expand-panel{max-height:300px;}
+  .expand-inner{
+    margin-top:14px; padding-top:13px; border-top:1px solid var(--line);
+    font-size:11.5px; color:var(--ink-500); line-height:1.6; font-weight:400;
+  }
+  .expand-inner .tag{color:var(--g-blue); font-weight:600;}
+
+  /* break-even bar */
+  .bev-bar-wrap{margin-top:15px;}
+  .bev-bar{height:12px; border-radius:8px; background:var(--surface-alt); display:flex; overflow:hidden;}
+  .bev-seg-current{background:var(--g-blue-sky); transition:width .35s ease;}
+  .bev-seg-loan{background:var(--g-amber); transition:width .35s ease;}
+  .bev-legend{display:flex; gap:16px; margin-top:9px;}
+  .legend-item{display:flex; align-items:center; gap:5px; font-size:10.5px; color:var(--ink-500); font-weight:400;}
+  .legend-swatch{width:8px; height:8px; border-radius:3px;}
+
+  /* ---------- CARD 3 : plain-language cash calendar ---------- */
+  .verdict{
+    margin-top:15px; padding:14px; border-radius:var(--r-lg);
+    display:flex; gap:12px; align-items:flex-start;
+  }
+  .verdict.ok{background:var(--g-green-100);}
+  .verdict.warn{background:var(--g-red-100);}
+  .verdict-emoji{
+    width:34px; height:34px; border-radius:50%; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center; font-size:17px;
+    background:rgba(255,255,255,0.75);
+  }
+  .verdict-head{font-weight:600; font-size:14px; line-height:1.35; margin-bottom:3px;}
+  .verdict.ok .verdict-head{color:var(--g-green-text);}
+  .verdict.warn .verdict-head{color:var(--g-red-text);}
+  .verdict-sub{font-size:11.5px; line-height:1.5; font-weight:400;}
+  .verdict.ok .verdict-sub{color:#0B6B45;}
+  .verdict.warn .verdict-sub{color:#8C332B;}
+
+  .cal-label{margin-top:16px; font-size:11px; font-weight:600; color:var(--ink-700);}
+  .cal-grid{margin-top:9px; display:grid; grid-template-columns:repeat(10,1fr); gap:5px;}
+  .cal-day{
+    aspect-ratio:1; border-radius:6px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:9.5px; font-weight:500; color:var(--ink-300);
+    background:var(--surface-alt); transition:background .3s ease, color .3s ease;
+  }
+  .cal-day.ok{background:var(--g-green-100); color:var(--g-green-text);}
+  .cal-day.tight{background:var(--g-amber-100); color:var(--g-amber-text);}
+  .cal-day.short{background:var(--g-red); color:#fff; font-weight:600;}
+  .cal-day.due{box-shadow:inset 0 0 0 2px var(--g-blue-dark); color:var(--g-blue-dark); font-weight:700;}
+  .cal-legend{display:flex; gap:13px; margin-top:10px; flex-wrap:wrap;}
+  .cal-legend .legend-item{font-size:10px;}
+  .legend-box{width:9px; height:9px; border-radius:3px;}
+
+  .fix-box{
+    margin-top:14px; padding:12px 13px; border-radius:var(--r-md);
+    background:var(--g-blue-050); border:1px solid var(--g-blue-100);
+    display:flex; gap:10px; align-items:flex-start;
+  }
+  .fix-box svg{flex-shrink:0; margin-top:1px;}
+  .fix-title{font-size:11px; font-weight:600; color:var(--g-blue-dark); margin-bottom:2px;}
+  .fix-desc{font-size:11.5px; color:var(--ink-700); line-height:1.5; font-weight:400;}
+  .fix-desc b{font-weight:600; color:var(--ink-900);}
+
+  /* ---------- CARD 4 recommendation ---------- */
+  .rec-panel{margin-top:14px; border-radius:var(--r-lg); padding:15px; display:flex; flex-direction:column; gap:5px;}
+  .rec-title{font-weight:700; font-size:16px;}
+  .rec-desc{font-size:12px; line-height:1.55; font-weight:400;}
+
+  /* ---------- sticky CTA ---------- */
+  .sticky-cta{
+    position:absolute; left:0; right:0; bottom:0;
+    padding:16px 16px 20px;
+    background:linear-gradient(180deg, rgba(245,248,252,0) 0%, #fff 26%);
+    display:flex; flex-direction:column; gap:6px;
+  }
+  .btn-primary{
+    background:var(--g-blue); color:#fff; border:none; border-radius:var(--r-pill);
+    padding:15px; font-family:'Poppins',sans-serif; font-weight:600; font-size:15px;
+    box-shadow:0 12px 22px -12px rgba(0,125,254,0.7);
+    cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;
+  }
+  .btn-primary:active{transform:scale(0.985);}
+  .btn-secondary{
+    background:transparent; border:none; color:var(--g-blue);
+    font-family:'Poppins',sans-serif; font-weight:600; font-size:13px;
+    padding:9px; cursor:pointer; text-align:center;
+  }
+  svg{display:block;}
+</style>
+</head>
+<body>
+
+<div class="device">
+  <div class="screen">
+
+    <div class="statusbar">
+      <span>9:41</span>
+      <div class="icons">
+        <svg width="17" height="11" viewBox="0 0 18 12" fill="none"><rect y="7" width="3" height="5" rx=".5" fill="#fff"/><rect x="5" y="5" width="3" height="7" rx=".5" fill="#fff"/><rect x="10" y="3" width="3" height="9" rx=".5" fill="#fff"/><rect x="15" width="3" height="12" rx=".5" fill="#fff"/></svg>
+        <svg width="21" height="11" viewBox="0 0 22 12" fill="none"><rect x="1" y="1" width="18" height="10" rx="2.5" stroke="#fff"/><rect x="2.5" y="2.5" width="13" height="7" rx="1" fill="#fff"/><rect x="20" y="4" width="1.5" height="4" rx=".7" fill="#fff"/></svg>
+      </div>
+    </div>
+
+    <div class="topnav">
+      <div class="nav-btn">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="nav-title"><span class="g-mark">G</span> GInsights</div>
+      <div class="nav-btn">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><circle cx="5" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="19" cy="12" r="1.6" fill="currentColor"/></svg>
+      </div>
+    </div>
+
+    <div class="scroll">
+
+      <!-- HERO -->
+      <div class="hero">
+        <div class="hero-eyebrow">GLoan Negosyo · Risk Advisor</div>
+        <div class="hero-title">Magkano ang gusto mong hiramin?</div>
+
+        <div class="amount-row">
+          <div class="ring-wrap">
+            <svg width="62" height="62" viewBox="0 0 62 62">
+              <circle class="ring-track" cx="31" cy="31" r="26" stroke-width="6" fill="none"/>
+              <circle id="ringFill" class="ring-fill" cx="31" cy="31" r="26" stroke-width="6" fill="none" stroke-dasharray="163.4" stroke-dashoffset="60"/>
+            </svg>
+            <div class="ring-center" id="ringLabel">--</div>
+          </div>
+          <div class="amount-field">
+            <label>Halaga ng loan</label>
+            <div class="amount-input-row">
+              <span class="peso-sign">₱</span>
+              <input id="amountInput" type="text" inputmode="numeric" value="85,000" />
+            </div>
+            <div class="risk-caption"><span class="risk-dot" id="captionDot"></span><span id="captionText">Moderate risk so far</span></div>
+          </div>
+        </div>
+
+        <div class="slider-wrap">
+          <input id="amountSlider" type="range" min="1000" max="300000" step="1000" value="85000" />
+          <div class="slider-scale"><span>₱1,000</span><span>₱300,000</span></div>
+        </div>
+
+        <!-- AI-recommended safe amount -->
+        <div class="rec-note" id="recNote">
+          <div class="rec-check" id="recCheck">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="#00A862" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="rec-note-body">
+            <div class="rec-note-label" id="recNoteLabel">Ligtas na halaga para sa'yo</div>
+            <div class="rec-note-amt" id="recNoteAmt">₱42,000</div>
+            <div class="rec-note-sub" id="recNoteSub">Base sa 6 na buwan mong benta at gastos.</div>
+          </div>
+          <div class="rec-apply" id="recApply">Gamitin</div>
+        </div>
+      </div>
+
+      <div class="trust-strip">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 3l7 3v6c0 4.6-3 8.4-7 9-4-.6-7-4.4-7-9V6l7-3Z" stroke="#007DFE" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke="#007DFE" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span><b>Gabay lang ito</b> — hindi nakakaapekto sa eligibility mo. Base sa GBusiness transactions mo.</span>
+      </div>
+
+      <div class="helper-text">Sinasagot ng GLoan kung <b>pwede</b> ka mangutang. Dito, kung <b>dapat</b>.</div>
+
+      <div class="section-head">
+        <div class="section-eyebrow">Suriin bago manghiram</div>
+        <div class="section-title">Your Loan Risk Check</div>
+      </div>
+
+      <div class="cards">
+
+        <!-- CARD 1 -->
+        <div class="card" id="card1">
+          <div class="card-top" onclick="toggleCard('card1')">
+            <div class="card-icon" style="background:var(--g-blue-100);">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="2.5" stroke="#007DFE" stroke-width="1.8"/><path d="M3 9.5h18" stroke="#007DFE" stroke-width="1.8"/><path d="M16 14h2.5" stroke="#007DFE" stroke-width="1.8" stroke-linecap="round"/></svg>
+            </div>
+            <div class="card-body">
+              <div class="card-q">Kaya ko ba itong bayaran?</div>
+              <div class="card-sub">Can I afford the monthly repayments?</div>
+            </div>
+            <svg class="chevron" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+
+          <div class="metric-row">
+            <div class="metric-block">
+              <div class="metric-num" id="c1-payment">₱8,500</div>
+              <div class="metric-label">Bayad kada buwan</div>
+            </div>
+            <div class="metric-block right">
+              <div class="metric-num" id="c1-cashflow">₱34,000</div>
+              <div class="metric-label">Buwanang cash flow</div>
+            </div>
+          </div>
+
+          <div class="progress-track"><div class="progress-fill" id="c1-bar" style="width:25%; background:var(--g-amber);"></div></div>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:11px;">
+            <span class="badge moderate" id="c1-badge"><span class="dot" style="background:var(--g-amber);"></span><span id="c1-badge-text">Moderate Risk</span></span>
+            <span style="font-size:11px; color:var(--ink-300); font-weight:500;" id="c1-pct">25% ng cash flow</span>
+          </div>
+
+          <div class="expand-panel"><div class="expand-inner">
+            Batay ito sa <span class="tag">average monthly cash-in</span> ng negosyo mo sa nakaraang 6 na buwan. Kapag lumagpas sa 40% ang bayad kumpara sa cash flow, mahirap na itong ma-absorb kada buwan nang walang epekto sa ibang gastusin.
+          </div></div>
+        </div>
+
+        <!-- CARD 2 -->
+        <div class="card" id="card2">
+          <div class="card-top" onclick="toggleCard('card2')">
+            <div class="card-icon" style="background:var(--g-green-100);">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#00A862" stroke-width="1.8"/><circle cx="12" cy="12" r="4.5" stroke="#00A862" stroke-width="1.8"/><circle cx="12" cy="12" r="1.3" fill="#00A862"/></svg>
+            </div>
+            <div class="card-body">
+              <div class="card-q">Kikita pa ba ako?</div>
+              <div class="card-sub">Will this loan still leave me profitable?</div>
+            </div>
+            <svg class="chevron" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+
+          <div class="metric-row">
+            <div class="metric-block">
+              <div class="metric-num" id="c2-profit">₱15,000</div>
+              <div class="metric-label">Kita ngayon kada buwan</div>
+            </div>
+            <div class="metric-block right">
+              <div class="metric-num" id="c2-remaining">₱6,500</div>
+              <div class="metric-label">Matitira pagkatapos magbayad</div>
+            </div>
+          </div>
+
+          <div class="bev-bar-wrap">
+            <div class="bev-bar">
+              <div class="bev-seg-current" id="c2-seg-current" style="width:78%;"></div>
+              <div class="bev-seg-loan" id="c2-seg-loan" style="width:22%;"></div>
+            </div>
+            <div class="bev-legend">
+              <div class="legend-item"><span class="legend-swatch" style="background:var(--g-blue-sky);"></span>Kasalukuyang break-even</div>
+              <div class="legend-item"><span class="legend-swatch" style="background:var(--g-amber);"></span>Dagdag ng loan</div>
+            </div>
+          </div>
+          <div style="margin-top:11px; font-size:11.5px; color:var(--ink-500); font-weight:400;">Kailangan mong kumita ng <b style="color:var(--ink-900); font-weight:600;" id="c2-breakeven">₱42,000</b> kada buwan para hindi malugi.</div>
+
+          <div class="expand-panel"><div class="expand-inner">
+            Ang <span class="tag">break-even</span> ay ang kailangan mong benta kada buwan para masakop ang lahat ng gastusin, kasama na ang bagong bayarin sa loan. Kung regular kang lumalampas dito, ligtas ang margin mo.
+          </div></div>
+        </div>
+
+        <!-- CARD 3 — REDESIGNED -->
+        <div class="card" id="card3">
+          <div class="card-top" onclick="toggleCard('card3')">
+            <div class="card-icon" style="background:var(--g-blue-100);">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="16" rx="2.5" stroke="#007DFE" stroke-width="1.8"/><path d="M3 10h18M8 3v4M16 3v4" stroke="#007DFE" stroke-width="1.8" stroke-linecap="round"/></svg>
+            </div>
+            <div class="card-body">
+              <div class="card-q">Sapat ba ang pera pag due?</div>
+              <div class="card-sub">May pambayad ba ako sa araw ng due?</div>
+            </div>
+            <svg class="chevron" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+
+          <!-- plain-language verdict -->
+          <div class="verdict warn" id="verdict">
+            <div class="verdict-emoji" id="verdictIcon">⚠️</div>
+            <div>
+              <div class="verdict-head" id="verdictHead">May 4 na araw na baka kapusin ka.</div>
+              <div class="verdict-sub" id="verdictSub">Sa Araw 22–26, kulang ka ng humigit-kumulang <b>₱4,200</b> para sa pang-araw-araw na gastos.</div>
+            </div>
+          </div>
+
+          <div class="cal-label">Susunod na 30 araw</div>
+          <div class="cal-grid" id="calGrid"></div>
+          <div class="cal-legend">
+            <div class="legend-item"><span class="legend-box" style="background:var(--g-green-100);"></span>Sapat</div>
+            <div class="legend-item"><span class="legend-box" style="background:var(--g-amber-100);"></span>Sakto lang</div>
+            <div class="legend-item"><span class="legend-box" style="background:var(--g-red);"></span>Kulang</div>
+            <div class="legend-item"><span class="legend-box" style="box-shadow:inset 0 0 0 2px var(--g-blue-dark);"></span>Due date</div>
+          </div>
+
+          <div class="fix-box" id="fixBox">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M9 18h6M10 21h4" stroke="#0057D2" stroke-width="1.8" stroke-linecap="round"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.3.3.5.7.5 1.1h6c0-.4.2-.8.5-1.1A6 6 0 0 0 12 3Z" stroke="#0057D2" stroke-width="1.8" stroke-linejoin="round"/></svg>
+            <div>
+              <div class="fix-title">Ang pwede mong gawin</div>
+              <div class="fix-desc" id="fixDesc">Magtabi ng <b>₱170 kada araw</b> simula ngayon. Sa araw ng due, may naipon ka nang <b>₱5,100</b> — sapat para hindi ka mangutang ulit.</div>
+            </div>
+          </div>
+
+          <div class="expand-panel"><div class="expand-inner">
+            Hinuhulaan ito mula sa <span class="tag">pattern ng benta mo</span> — kung anong mga araw ka malakas at mahina kumita, base sa nakaraang 6 na buwan sa GBusiness. Ang mga pulang araw ay kung kailan mas malaki ang lalabas kaysa papasok na pera.
+          </div></div>
+        </div>
+
+        <!-- CARD 4 -->
+        <div class="card" id="card4">
+          <div class="card-top" onclick="toggleCard('card4')">
+            <div class="card-icon" style="background:var(--g-amber-100);">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#F5A623" stroke-width="1.8"/><path d="M12 7v5l3 2" stroke="#F5A623" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="card-body">
+              <div class="card-q">Tamang panahon ba mangutang?</div>
+              <div class="card-sub">Is this the right time to borrow?</div>
+            </div>
+            <svg class="chevron" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+
+          <div class="rec-panel" id="recPanel" style="background:var(--g-amber-100);">
+            <div class="rec-title" id="recTitle" style="color:var(--g-amber-text);">Mag-ingat sa halagang ito</div>
+            <div class="rec-desc" id="recDesc" style="color:#8A5C08;">Sa halagang <b>₱85,000</b>, aabot sa 25% ng buwanang cash flow mo ang babayaran.</div>
+          </div>
+
+          <div class="expand-panel"><div class="expand-inner">
+            Pinagsama-samang resulta ito ng repayment capacity, break-even impact, at cash-flow risk sa itaas. Hindi ito panghuling desisyon — ikaw pa rin ang nakakaalam ng buong kalagayan ng negosyo mo.
+          </div></div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="sticky-cta">
+      <button class="btn-primary" id="ctaMain">
+        <span id="ctaMainText">Ituloy sa ₱85,000</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <button class="btn-secondary" id="ctaSecondary">Gamitin ang ligtas na ₱42,000</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // ---------- business profile (demo values) ----------
+  const MONTHLY_CASHFLOW = 34000;
+  const MONTHLY_PROFIT   = 15000;
+  const BASE_BREAKEVEN   = 33500;
+  const SAFE_RATIO       = 0.125;              // AI-derived safe share of cash flow
+  const SAFE_AMOUNT      = Math.round((SAFE_RATIO * MONTHLY_CASHFLOW / 0.1) / 1000) * 1000;
+  const RING_CIRC        = 2 * Math.PI * 26;
+
+  const $ = id => document.getElementById(id);
+  const peso = n => '₱' + Math.round(n).toLocaleString('en-PH');
+  const riskTier = r => r < 0.18 ? 'low' : (r < 0.35 ? 'moderate' : 'high');
+
+  const RISK = {
+    // `main` = on white cards, `hero` = brighter variant readable on the blue hero
+    low:      {main:'#00A862', hero:'#3EDD9B', bg:'#E1F7EC', text:'#007343', label:'Low Risk'},
+    moderate: {main:'#F5A623', hero:'#FFC043', bg:'#FFF4E0', text:'#9A6206', label:'Moderate Risk'},
+    high:     {main:'#E8483C', hero:'#FF7A6B', bg:'#FFECEA', text:'#A32B22', label:'High Risk'}
+  };
+
+  // build 30-day calendar cells once
+  const calCells = [];
+  for(let i=1; i<=30; i++){
+    const d = document.createElement('div');
+    d.className = 'cal-day';
+    d.textContent = i;
+    $('calGrid').appendChild(d);
+    calCells.push(d);
+  }
+
+  function render(amount){
+    amount = Math.max(1000, Math.min(300000, amount));
+
+    const monthlyPayment = amount * 0.1;
+    const ratio = monthlyPayment / MONTHLY_CASHFLOW;
+    const tier = riskTier(ratio);
+    const rc = RISK[tier];
+    const remainingProfit = MONTHLY_PROFIT - monthlyPayment;
+    const newBreakeven = BASE_BREAKEVEN + monthlyPayment;
+    const loanShareOfBev = monthlyPayment / newBreakeven;
+
+    // ----- hero ring -----
+    const pct = Math.min(1, ratio / 0.6);
+    $('ringFill').style.strokeDashoffset = RING_CIRC * (1 - pct);
+    $('ringFill').style.stroke = rc.hero;
+    $('ringLabel').textContent = Math.round(ratio*100) + '%';
+    $('ringLabel').style.color = rc.hero;
+    $('captionDot').style.background = rc.hero;
+    $('captionText').textContent = rc.label + ' so far';
+
+    if(document.activeElement !== $('amountInput')){
+      $('amountInput').value = Math.round(amount).toLocaleString('en-PH');
+    }
+    if(document.activeElement !== $('amountSlider')){
+      $('amountSlider').value = Math.round(amount);
+    }
+
+    // ----- recommended-amount note -----
+    const withinSafe = amount <= SAFE_AMOUNT;
+    $('recNote').classList.toggle('in-range', withinSafe);
+    $('recNoteAmt').textContent = peso(SAFE_AMOUNT);
+    if(withinSafe){
+      $('recNoteLabel').textContent = 'Nasa ligtas na hanay ka';
+      $('recNoteSub').textContent = 'Kaya ng negosyo mo ang halagang ito nang hindi nauubusan ng puhunan.';
+    } else {
+      $('recNoteLabel').textContent = "Ligtas na halaga para sa'yo";
+      $('recNoteSub').innerHTML = 'Base sa 6 na buwan mong benta at gastos. Mas mababa ito ng ' + peso(amount - SAFE_AMOUNT) + ' sa hinihiram mo.';
+    }
+
+    // ----- card 1 -----
+    $('c1-payment').textContent = peso(monthlyPayment);
+    $('c1-cashflow').textContent = peso(MONTHLY_CASHFLOW);
+    $('c1-bar').style.width = Math.min(100, pct*100) + '%';
+    $('c1-bar').style.background = rc.main;
+    $('c1-badge').className = 'badge ' + tier;
+    $('c1-badge').querySelector('.dot').style.background = rc.main;
+    $('c1-badge-text').textContent = rc.label;
+    $('c1-pct').textContent = Math.round(ratio*100) + '% ng cash flow';
+
+    // ----- card 2 -----
+    $('c2-profit').textContent = peso(MONTHLY_PROFIT);
+    $('c2-remaining').textContent = remainingProfit >= 0 ? peso(remainingProfit) : '-' + peso(Math.abs(remainingProfit));
+    $('c2-remaining').style.color = remainingProfit >= 0 ? 'var(--ink-900)' : 'var(--g-red)';
+    $('c2-seg-current').style.width = ((1-loanShareOfBev)*100) + '%';
+    $('c2-seg-loan').style.width = (loanShareOfBev*100) + '%';
+    $('c2-breakeven').textContent = peso(newBreakeven);
+
+    // ----- card 3 : daily balance -> calendar -----
+    const dailyIn = MONTHLY_CASHFLOW / 30;
+    let shortDays = [], tightDays = 0, worstDeficit = 0;
+
+    for(let i=0; i<30; i++){
+      const day = i + 1;
+      // seasonal sales rhythm: stronger on paydays (15 & 30), softer mid-cycle
+      const rhythm = 1 + 0.35*Math.sin((day/30)*Math.PI*2 - 0.6);
+      const inflow = dailyIn * rhythm;
+      const outflow = dailyIn * 0.82 + (day >= 28 ? monthlyPayment/3 : 0);
+      const net = inflow - outflow;
+
+      let cls = 'cal-day';
+      if(net < -dailyIn*0.15){ cls += ' short'; shortDays.push(day); worstDeficit += Math.abs(net); }
+      else if(net < dailyIn*0.10){ cls += ' tight'; tightDays++; }
+      else { cls += ' ok'; }
+      if(day === 30) cls += ' due';
+      calCells[i].className = cls;
+    }
+
+    // ----- verdict copy -----
+    const v = $('verdict');
+    if(shortDays.length === 0){
+      v.className = 'verdict ok';
+      $('verdictIcon').textContent = '✅';
+      $('verdictHead').textContent = 'May sapat kang pera buong buwan.';
+      $('verdictSub').innerHTML = 'Kahit dumating ang due date sa Araw 30, hindi ka kapusin sa pang-araw-araw na gastos.';
+      $('fixBox').style.display = 'none';
+    } else {
+      const first = shortDays[0], last = shortDays[shortDays.length-1];
+      const range = first === last ? ('Araw ' + first) : ('Araw ' + first + '–' + last);
+      const gapPeso = Math.round(worstDeficit/100)*100;
+      const daily = Math.ceil(gapPeso/30/10)*10;
+
+      v.className = 'verdict warn';
+      $('verdictIcon').textContent = '⚠️';
+      $('verdictHead').textContent = 'May ' + shortDays.length + ' araw na baka kapusin ka.';
+      $('verdictSub').innerHTML = 'Sa <b>' + range + '</b>, kulang ka ng humigit-kumulang <b>' + peso(gapPeso) + '</b> para sa pang-araw-araw na gastos.';
+      $('fixBox').style.display = 'flex';
+      $('fixDesc').innerHTML = 'Magtabi ng <b>' + peso(daily) + ' kada araw</b> simula ngayon. Sa araw ng due, may naipon ka nang <b>' + peso(daily*30) + '</b> — sapat para hindi ka mangutang ulit.';
+    }
+
+    // ----- card 4 -----
+    let title, desc;
+    if(tier === 'low'){
+      title = 'Rekomendado';
+      desc = `Sa halagang <b>${peso(amount)}</b>, mananatiling malusog ang cash flow mo — mga ${Math.round(ratio*100)}% lang ng buwanang kita ang mapupunta sa bayad. Maganda ang timing para mangutang.`;
+    } else if(tier === 'moderate'){
+      title = 'Mag-ingat sa halagang ito';
+      desc = `Sa halagang <b>${peso(amount)}</b>, aabot sa ${Math.round(ratio*100)}% ng buwanang cash flow mo ang babayaran. Kaya pa, pero mas ligtas ang <b>${peso(SAFE_AMOUNT)}</b>.`;
+    } else {
+      title = 'Hindi pa ngayon';
+      desc = `Sa halagang <b>${peso(amount)}</b>, aabot sa ${Math.round(ratio*100)}% ng cash flow mo ang bayad — mataas ang tsansang kapusin ka. Bawasan sa <b>${peso(SAFE_AMOUNT)}</b>, o hintayin ang mas malakas na buwan.`;
+    }
+    $('recPanel').style.background = rc.bg;
+    $('recTitle').style.color = rc.main === '#F5A623' ? rc.text : rc.main;
+    $('recTitle').textContent = title;
+    $('recDesc').style.color = rc.text;
+    $('recDesc').innerHTML = desc;
+
+    // ----- CTA -----
+    $('ctaMainText').textContent = 'Ituloy sa ' + peso(amount);
+    $('ctaSecondary').style.display = withinSafe ? 'none' : 'block';
+    $('ctaSecondary').textContent = 'Gamitin ang ligtas na ' + peso(SAFE_AMOUNT);
+  }
+
+  // ---------- interactions ----------
+  window.toggleCard = id => document.getElementById(id).classList.toggle('expanded');
+
+  $('amountInput').addEventListener('input', e=>{
+    const raw = e.target.value.replace(/[^0-9]/g,'');
+    render(raw ? Number(raw) : 0);
+  });
+  $('amountInput').addEventListener('blur', ()=>{
+    render(Number($('amountInput').value.replace(/[^0-9]/g,'')) || 1000);
+  });
+
+  $('amountSlider').addEventListener('input', e=>{
+    render(Number(e.target.value));
+  });
+
+  function applySafe(){
+    render(SAFE_AMOUNT);
+    document.querySelector('.scroll').scrollTo({top:0, behavior:'smooth'});
+  }
+  $('recNote').addEventListener('click', ()=>{ if(!$('recNote').classList.contains('in-range')) applySafe(); });
+  $('ctaSecondary').addEventListener('click', applySafe);
+
+  $('ctaMain').addEventListener('click', ()=>{
+    $('card4').classList.add('expanded');
+    $('card4').scrollIntoView({behavior:'smooth', block:'center'});
+  });
+
+  render(85000);
+</script>
+
+</body>
+</html>

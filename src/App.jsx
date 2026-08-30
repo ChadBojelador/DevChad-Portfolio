@@ -21,6 +21,12 @@ const backgroundMusicSrc = '/mascot/sounds/bg%20music.mp3';
 const clickAudioSrc = '/mascot/sounds/click.mp3';
 const mascotSrc = '/mascot/chad-mascot.png';
 const chatMascotSrc = '/mascot/chatmascot.webp';
+const ginsightsScreens = [
+  { src: '/projects/ginsight/ginsight 1.png', alt: 'GInsights landing screen' },
+  { src: '/projects/ginsight/ginsight 2.png', alt: 'GInsights loan risk advisor screen' },
+  { src: '/projects/ginsight/ginsight 3.png', alt: 'GInsights financial guidance screen' },
+  { src: '/projects/ginsight/ginsight 4.png', alt: 'GInsights recommendation screen' },
+];
 
 const detailPageHashes = {
   productStories: '#product-stories',
@@ -38,7 +44,7 @@ function createDefaultPresentation() {
         storyImage: '/projects/ginsight/ginsight 1.png',
         storyImageAlt: 'Ginsight product preview',
         storyLabel: 'Product stories',
-        storyTitle: 'Product stories in progress.',
+        storyTitle: '',
         storyDescription: 'Each story will bring together the problem, the process, and the human impact behind the work.',
         learningImage: '/Learning/asean.png',
         learningImageAlt: 'ASEAN learning certificate',
@@ -46,8 +52,8 @@ function createDefaultPresentation() {
       },
       storyFeature: {
         eyebrow: 'Featured preview',
-        title: 'Product stories in progress.',
-        description: 'Each story will bring together the problem, the process, and the human impact behind the work.',
+        title: 'GInsights in GCash for Business',
+        description: 'Not a dashboard. Not a calculator. A financial decision partner built into GCash for Business. A project for ImaGnation 2026.',
         image: '/projects/ginsight/ginsight 1.png',
         imageAlt: 'Ginsight product preview',
       },
@@ -102,7 +108,16 @@ function normalisePortfolioContent(content) {
   const projects = Array.isArray(content?.projects) ? content.projects : defaults.projects;
   const timeline = Array.isArray(content?.earlyChapters?.timeline) ? content.earlyChapters.timeline : defaults.earlyChapters.timeline;
   const carousel = Array.isArray(content?.earlyChapters?.carousel) ? content.earlyChapters.carousel : defaults.earlyChapters.carousel;
+  const visibleCarousel = carousel.filter((item) => item.image !== '/early-chapters/IINTESS.jpg');
   const savedPresentation = content?.presentation ?? {};
+  const savedHome = { ...savedPresentation.projects?.home };
+  const savedStoryFeature = { ...savedPresentation.projects?.storyFeature };
+
+  if (savedHome.storyTitle === 'Product stories in progress.') savedHome.storyTitle = '';
+  if (savedStoryFeature.title === 'Product stories in progress.') {
+    savedStoryFeature.title = 'GInsights in GCash for Business';
+    savedStoryFeature.description = 'Not a dashboard. Not a calculator. A financial decision partner built into GCash for Business. A project for ImaGnation 2026.';
+  }
 
   return {
     projects: projects.map((project, index) => ({
@@ -113,14 +128,14 @@ function normalisePortfolioContent(content) {
     earlyChapters: {
       direction: content?.earlyChapters?.direction === 'ascending' ? 'ascending' : 'descending',
       timeline: timeline.map((item, index) => ({ ...item, id: item.id || `chapter-${index + 1}`, order: Number(item.order) || index + 1 })),
-      carousel: carousel.map((item, index) => ({ ...item, id: item.id || `story-${index + 1}`, order: Number(item.order) || index + 1 })),
+      carousel: visibleCarousel.map((item, index) => ({ ...item, id: item.id || `story-${index + 1}`, order: Number(item.order) || index + 1 })),
     },
     presentation: {
       projects: {
         ...defaults.presentation.projects,
         ...savedPresentation.projects,
-        home: { ...defaults.presentation.projects.home, ...savedPresentation.projects?.home },
-        storyFeature: { ...defaults.presentation.projects.storyFeature, ...savedPresentation.projects?.storyFeature },
+        home: { ...defaults.presentation.projects.home, ...savedHome },
+        storyFeature: { ...defaults.presentation.projects.storyFeature, ...savedStoryFeature },
         detail: { ...defaults.presentation.projects.detail, ...savedPresentation.projects?.detail },
       },
       earlyChapters: {
@@ -924,8 +939,8 @@ function Projects({ onOpenPage, presentation, projects }) {
       <article className="projects-bento-note glass-panel magnetic-bento-card">
         {home.storyImage && <img src={home.storyImage} alt={home.storyImageAlt || ''} loading="lazy" />}
         <div className="projects-bento-copy">
-          <p className="projects-bento-label">{home.storyLabel}</p>
-          <h3>{home.storyTitle}</h3>
+                <p className="projects-bento-label">{home.storyLabel}</p>
+                {home.storyTitle && <h3>{home.storyTitle}</h3>}
           <p>{home.storyDescription}</p>
         </div>
       </article>
@@ -1031,6 +1046,8 @@ function DetailPageHeader({ eyebrow, title, description, onBack }) {
 }
 
 function ProductStoriesPage({ onBack, presentation, projects }) {
+  const [isStoryOpen, setIsStoryOpen] = useState(false);
+
   return (
     <div className="detail-page-content">
       <DetailPageHeader
@@ -1050,10 +1067,86 @@ function ProductStoriesPage({ onBack, presentation, projects }) {
             <p className="eyebrow">{presentation.storyFeature.eyebrow}</p>
             <h2 id="product-stories-title">{presentation.storyFeature.title}</h2>
             <p>{presentation.storyFeature.description}</p>
+            <button className="section-page-link product-story-feature-action" type="button" onClick={() => setIsStoryOpen(true)}>
+              View project story <span aria-hidden="true">→</span>
+            </button>
           </div>
         </article>
-        <div className="product-stories-wall">
+        <div id="project-stories-wall" className="product-stories-wall">
           <DriftWall projects={projects} interactive />
+        </div>
+      </section>
+      {isStoryOpen && <GInsightsStoryDialog onClose={() => setIsStoryOpen(false)} />}
+    </div>
+  );
+}
+
+function GInsightsStoryDialog({ onClose }) {
+  const [activeScreen, setActiveScreen] = useState(0);
+  const screen = ginsightsScreens[activeScreen];
+
+  useEffect(() => {
+    const closeOnEscape = (event) => {
+      if (event.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', closeOnEscape);
+    return () => window.removeEventListener('keydown', closeOnEscape);
+  }, [onClose]);
+
+  return (
+    <div className="ginsights-story-backdrop" role="presentation" onMouseDown={onClose}>
+      <section className="ginsights-story-dialog" role="dialog" aria-modal="true" aria-labelledby="ginsights-story-title" onMouseDown={(event) => event.stopPropagation()}>
+        <div className="ginsights-story-dialog-header">
+          <div>
+            <p className="eyebrow">GInsights · interactive project story</p>
+            <h2 id="ginsights-story-title">Explore the product screens and test the prototype.</h2>
+          </div>
+          <button className="ginsights-story-close" type="button" onClick={onClose} aria-label="Close GInsights project story">×</button>
+        </div>
+        <div className="ginsights-story-content">
+          <section className="ginsights-gallery glass-panel" aria-labelledby="ginsights-gallery-title">
+            <div className="ginsights-panel-heading">
+              <p className="panel-label">Product screens</p>
+              <h3 id="ginsights-gallery-title">GInsights walkthrough</h3>
+            </div>
+            <figure className="ginsights-screen-stage">
+              <img src={screen.src} alt={screen.alt} />
+              <figcaption>
+                <span>Screen {activeScreen + 1} of {ginsightsScreens.length}</span>
+                <span>{screen.alt}</span>
+              </figcaption>
+            </figure>
+            <div className="ginsights-walkthrough-controls" aria-label="GInsights walkthrough controls">
+              <button
+                className="ginsights-walkthrough-button"
+                type="button"
+                onClick={() => setActiveScreen((current) => (current - 1 + ginsightsScreens.length) % ginsightsScreens.length)}
+              >
+                Previous
+              </button>
+              <button
+                className="ginsights-walkthrough-button ginsights-walkthrough-next"
+                type="button"
+                onClick={() => setActiveScreen((current) => (current + 1) % ginsightsScreens.length)}
+              >
+                Next
+              </button>
+            </div>
+          </section>
+          <section className="ginsights-prototype glass-panel" aria-labelledby="ginsights-prototype-title">
+            <div className="ginsights-panel-heading">
+              <p className="panel-label">Interactive prototype</p>
+              <h3 id="ginsights-prototype-title">Try the GLoan risk advisor</h3>
+            </div>
+            <div className="ginsights-prototype-preview">
+              <iframe
+                className="ginsights-prototype-frame"
+                src="/projects/ginsight/ginsights-prototype.html"
+                title="Interactive GInsights prototype"
+                sandbox="allow-scripts"
+              />
+            </div>
+          </section>
         </div>
       </section>
     </div>
@@ -1061,6 +1154,8 @@ function ProductStoriesPage({ onBack, presentation, projects }) {
 }
 
 function EarlyChaptersPage({ onBack, items, presentation, onImageOpen }) {
+  const [isCertificatesOpen, setIsCertificatesOpen] = useState(false);
+
   return (
     <div className="detail-page-content">
       <DetailPageHeader
@@ -1093,10 +1188,52 @@ function EarlyChaptersPage({ onBack, items, presentation, onImageOpen }) {
                 <p className="eyebrow">{item.eyebrow}</p>
                 <h2>{item.title}</h2>
                 <p>{item.description}</p>
+                {item.id === 'always-learning' && (
+                  <button className="roadmap-certificates-button" type="button" onClick={() => setIsCertificatesOpen(true)}>
+                    See certificates <span aria-hidden="true">→</span>
+                  </button>
+                )}
               </div>
             </div>
           </article>
         ))}
+      </section>
+      {isCertificatesOpen && <CertificatesDialog onClose={() => setIsCertificatesOpen(false)} />}
+    </div>
+  );
+}
+
+function CertificatesDialog({ onClose }) {
+  useEffect(() => {
+    const closeOnEscape = (event) => {
+      if (event.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', closeOnEscape);
+    return () => window.removeEventListener('keydown', closeOnEscape);
+  }, [onClose]);
+
+  return (
+    <div className="certificates-dialog-backdrop" role="presentation" onMouseDown={onClose}>
+      <section className="certificates-dialog" role="dialog" aria-modal="true" aria-labelledby="certificates-dialog-title" onMouseDown={(event) => event.stopPropagation()}>
+        <div className="certificates-dialog-header">
+          <div>
+            <p className="eyebrow">Always learning</p>
+            <h2 id="certificates-dialog-title">Certificates</h2>
+          </div>
+          <button className="certificates-dialog-close" type="button" onClick={onClose} aria-label="Close certificates">×</button>
+        </div>
+        <div className="certificates-macbook" aria-label="Certificate displayed in a MacBook-style frame">
+          <div className="certificates-macbook-screen">
+            <div className="certificates-macbook-toolbar" aria-hidden="true">
+              <span /><span /><span />
+              <p>Learning credentials</p>
+            </div>
+            <div className="certificates-macbook-display">
+              <img src="/Learning/asean.png" alt="ASEAN learning certificate" />
+            </div>
+          </div>
+          <div className="certificates-macbook-base" aria-hidden="true"><span /></div>
+        </div>
       </section>
     </div>
   );
