@@ -169,7 +169,7 @@
 #experience.magnetic-bento { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
 #experience.magnetic-bento .section-intro { grid-column: 1 / -1; }
 .experience-categories { grid-column: 1 / -1; grid-template-columns: 1.1fr 0.9fr; }
-.mascot-frame { position: relative; z-index: 1; display: grid; width: min(24rem, 70vw); min-height: min(24rem, 70vw); aspect-ratio: 1; margin-bottom: clamp(0.75rem, 2vw, 1.25rem); place-items: center; animation: mascot-float 5.5s ease-in-out infinite alternate; transition: width 1000ms cubic-bezier(0.16, 1, 0.3, 1), min-height 1000ms cubic-bezier(0.16, 1, 0.3, 1), margin 1000ms cubic-bezier(0.16, 1, 0.3, 1); }
+.mascot-frame { position: relative; z-index: 1; display: grid; width: min(34rem, 70vw); min-height: min(24rem, 70vw); aspect-ratio: 1; margin-bottom: clamp(0.75rem, 2vw, 1.25rem); place-items: center; animation: mascot-float 5.5s ease-in-out infinite alternate; transition: width 1000ms cubic-bezier(0.16, 1, 0.3, 1), min-height 1000ms cubic-bezier(0.16, 1, 0.3, 1), margin 1000ms cubic-bezier(0.16, 1, 0.3, 1); }
 .mascot-frame.has-mascot-image { margin-bottom: clamp(0.65rem, 1.5vw, 1.05rem); pointer-events: none; }
 .mascot-frame img { display: block; width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 18px 18px rgba(18, 117, 190, 0.13)); }
 .mascot-placeholder { display: grid; width: 100%; min-height: inherit; padding: 1rem; color: var(--muted); place-content: center; text-align: center; }
@@ -440,7 +440,7 @@
   .portfolio-layout:not(.hero-is-docked) .portfolio-content { visibility: hidden; opacity: 0; pointer-events: none; }
   .portfolio-layout.hero-is-docked .hero { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; width: clamp(22rem, 34vw, 31rem); height: 100svh; min-height: 100svh; padding: clamp(3.5rem, 6vw, 5.5rem) clamp(1.5rem, 3vw, 2.5rem); margin: 0 0 0 clamp(1rem, 3vw, 3.5rem); text-align: left; }
   .portfolio-layout.hero-is-docked .hero-glass-card { top: 1rem; right: 0; bottom: 1rem; left: 0; width: 100%; border-radius: 1.1rem; }
-  .portfolio-layout.hero-is-docked .mascot-frame { flex: 0 0 auto; width: min(9.5rem, 46%); min-height: 0; margin: 0 0 0.65rem; }
+  .portfolio-layout.hero-is-docked .mascot-frame { flex: 0 0 auto; width: min(15.5rem, 46%); min-height: 0; margin: 0 0 0.65rem; }
   .portfolio-layout.hero-is-docked .hero-copy { max-width: 22rem; justify-items: start; }
   .portfolio-layout.hero-is-docked .hero h1 { font-size: clamp(3rem, 4.4vw, 4.5rem); }
   .portfolio-layout.hero-is-docked .hero-role { margin-top: 0.8rem; text-align: left; }
@@ -448,6 +448,12 @@
   .portfolio-layout.hero-is-docked .hero-actions { justify-content: flex-start; }
   .portfolio-layout.hero-is-docked .portfolio-content { margin-top: -100svh; margin-right: clamp(0.75rem, 2vw, 2.25rem); margin-left: calc(clamp(22rem, 34vw, 31rem) + clamp(2rem, 4vw, 5.5rem)); visibility: visible; opacity: 1; pointer-events: auto; }
   .portfolio-layout.hero-is-docked .portfolio-content .section { width: min(100% - 1rem, 70rem); margin-right: 0; margin-left: 0; }
+}
+
+@media (min-width: 701px) {
+  .hero:not(.is-docked) .mascot-frame.has-mascot-image {
+    margin-bottom: -1.5rem;
+  }
 }
 
 @media (max-width: 700px) {
