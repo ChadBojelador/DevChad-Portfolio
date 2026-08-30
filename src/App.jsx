@@ -17,8 +17,7 @@ const WELCOME_SESSION_KEY = 'chad-portfolio-welcome-seen';
 const AUDIO_ENABLED_SESSION_KEY = 'chad-portfolio-audio-enabled';
 const THEME_STORAGE_KEY = 'chad-portfolio-theme';
 const CONTENT_STORAGE_KEY = 'chad-portfolio-admin-content';
-const welcomeAudioSrc = '/mascot/sounds/startup.MP3';
-const heroAudioSrc = '/mascot/sounds/startup2.MP3';
+const backgroundMusicSrc = '/mascot/sounds/bg%20music.mp3';
 const clickAudioSrc = '/mascot/sounds/click.mp3';
 const mascotSrc = '/mascot/chad-mascot.png';
 const chatMascotSrc = '/mascot/chatmascot.webp';
@@ -27,6 +26,50 @@ const detailPageHashes = {
   productStories: '#product-stories',
   earlyChapters: '#early-chapters',
 };
+
+function createDefaultPresentation() {
+  return {
+    projects: {
+      home: {
+        eyebrow: '02 · selected work',
+        title: 'Projects in motion.',
+        description: 'Drag through the wall to explore the product stories as they take shape.',
+        actionLabel: 'View product stories',
+        storyImage: '/projects/ginsight/ginsight 1.png',
+        storyImageAlt: 'Ginsight product preview',
+        storyLabel: 'Product stories',
+        learningImage: '/Learning/asean.png',
+        learningImageAlt: 'ASEAN learning certificate',
+        learningLabel: 'Always learning',
+      },
+      storyFeature: {
+        eyebrow: 'Featured preview',
+        title: 'Product stories in progress.',
+        description: 'Each story will bring together the problem, the process, and the human impact behind the work.',
+        image: '/projects/ginsight/ginsight 1.png',
+        imageAlt: 'Ginsight product preview',
+      },
+      detail: {
+        eyebrow: 'Selected work · product stories',
+        title: 'The stories behind the work.',
+        description: 'A dedicated space for the products, experiments, and ideas that are taking shape.',
+      },
+    },
+    earlyChapters: {
+      home: {
+        eyebrow: '03 · learning in public',
+        title: 'The early chapters.',
+        description: 'Explore the moments shaping Chad\'s early path in AI engineering.',
+        actionLabel: 'Explore early chapters',
+      },
+      detail: {
+        eyebrow: 'Learning in public · early chapters',
+        title: 'A roadmap of curiosity.',
+        description: 'The people, experiments, and learning moments that are gradually shaping an AI engineering journey.',
+      },
+    },
+  };
+}
 
 function createDefaultPortfolioContent() {
   return {
@@ -48,6 +91,7 @@ function createDefaultPortfolioContent() {
         order: Number(item.order) || index + 1,
       })),
     },
+    presentation: createDefaultPresentation(),
   };
 }
 
@@ -56,6 +100,7 @@ function normalisePortfolioContent(content) {
   const projects = Array.isArray(content?.projects) ? content.projects : defaults.projects;
   const timeline = Array.isArray(content?.earlyChapters?.timeline) ? content.earlyChapters.timeline : defaults.earlyChapters.timeline;
   const carousel = Array.isArray(content?.earlyChapters?.carousel) ? content.earlyChapters.carousel : defaults.earlyChapters.carousel;
+  const savedPresentation = content?.presentation ?? {};
 
   return {
     projects: projects.map((project, index) => ({
@@ -67,6 +112,21 @@ function normalisePortfolioContent(content) {
       direction: content?.earlyChapters?.direction === 'ascending' ? 'ascending' : 'descending',
       timeline: timeline.map((item, index) => ({ ...item, id: item.id || `chapter-${index + 1}`, order: Number(item.order) || index + 1 })),
       carousel: carousel.map((item, index) => ({ ...item, id: item.id || `story-${index + 1}`, order: Number(item.order) || index + 1 })),
+    },
+    presentation: {
+      projects: {
+        ...defaults.presentation.projects,
+        ...savedPresentation.projects,
+        home: { ...defaults.presentation.projects.home, ...savedPresentation.projects?.home },
+        storyFeature: { ...defaults.presentation.projects.storyFeature, ...savedPresentation.projects?.storyFeature },
+        detail: { ...defaults.presentation.projects.detail, ...savedPresentation.projects?.detail },
+      },
+      earlyChapters: {
+        ...defaults.presentation.earlyChapters,
+        ...savedPresentation.earlyChapters,
+        home: { ...defaults.presentation.earlyChapters.home, ...savedPresentation.earlyChapters?.home },
+        detail: { ...defaults.presentation.earlyChapters.detail, ...savedPresentation.earlyChapters?.detail },
+      },
     },
   };
 }
@@ -202,11 +262,8 @@ function useGsapSmoothScroll(enabled) {
 }
 
 function App() {
-  const welcomeAudioRef = useRef(null);
-  const heroAudioRef = useRef(null);
+  const backgroundMusicRef = useRef(null);
   const clickAudioRef = useRef(null);
-  const hasStartedWelcomeAudioRef = useRef(false);
-  const hasStartedHeroAudioRef = useRef(false);
   const [hasEntered, setHasEntered] = useState(() => sessionStorage.getItem(WELCOME_SESSION_KEY) === 'true');
   const [isWelcomeLeaving, setIsWelcomeLeaving] = useState(false);
   const [isAudioEnabled, setIsAudioEnabled] = useState(() => sessionStorage.getItem(AUDIO_ENABLED_SESSION_KEY) === 'true');
@@ -214,6 +271,7 @@ function App() {
   const [theme, setTheme] = useState(() => localStorage.getItem(THEME_STORAGE_KEY) ?? 'light');
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isHeroDocked, setIsHeroDocked] = useState(false);
+  const [isHomeRestored, setIsHomeRestored] = useState(false);
   const [activePage, setActivePage] = useState(getActivePage);
   const [portfolioContent, setPortfolioContent] = useState(loadPortfolioContent);
   const [isAdminOpen, setIsAdminOpen] = useState(false);
@@ -221,6 +279,7 @@ function App() {
   const smoothScrollTo = useGsapSmoothScroll(hasEntered && activePage === 'home');
   const earlyChapterRoadmapItems = getOrderedRoadmapItems(portfolioContent);
   const earlyChapterCarouselItems = getOrderedCarouselItems(portfolioContent);
+  const presentation = portfolioContent.presentation;
 
   const updatePortfolioContent = useCallback((updater) => {
     setPortfolioContent((previous) => normalisePortfolioContent(updater(previous)));
@@ -240,15 +299,18 @@ function App() {
 
     window.history.pushState(null, '', hash);
     setIsHeroDocked(false);
+    setIsHomeRestored(false);
     setActivePage(page);
     window.scrollTo({ top: 0, behavior: 'auto' });
   }, []);
 
   const returnHome = useCallback(() => {
+    const useDesktopSplitLayout = window.matchMedia('(min-width: 901px)').matches;
     window.history.pushState(null, '', `${window.location.pathname}${window.location.search}`);
-    setIsHeroDocked(false);
+    window.scrollTo({ top: useDesktopSplitLayout ? 48 : 0, behavior: 'auto' });
+    setIsHeroDocked(useDesktopSplitLayout);
+    setIsHomeRestored(true);
     setActivePage('home');
-    window.scrollTo({ top: 0, behavior: 'auto' });
   }, []);
 
   useEffect(() => {
@@ -286,7 +348,7 @@ function App() {
   }, [lightboxImage]);
 
   useEffect(() => {
-    if (!hasEntered) return undefined;
+    if (!hasEntered || activePage !== 'home') return undefined;
 
     const revealTargets = document.querySelectorAll('.scroll-reveal');
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -306,7 +368,7 @@ function App() {
 
     revealTargets.forEach((target) => observer.observe(target));
     return () => observer.disconnect();
-  }, [hasEntered]);
+  }, [hasEntered, activePage]);
 
   useEffect(() => {
     if (activePage !== 'home') {
@@ -339,7 +401,7 @@ function App() {
   }, [activePage]);
 
   useEffect(() => {
-    if (!hasEntered) return undefined;
+    if (!hasEntered || activePage !== 'home') return undefined;
 
     const bentoTargets = document.querySelectorAll('.magnetic-bento');
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -359,7 +421,7 @@ function App() {
 
     bentoTargets.forEach((target) => observer.observe(target));
     return () => observer.disconnect();
-  }, [hasEntered]);
+  }, [hasEntered, activePage]);
 
   function playClickSound() {
     if (!isAudioEnabled) return;
@@ -371,49 +433,26 @@ function App() {
     clickAudio.play().catch(() => {});
   }
 
-  const playWelcomeAudio = useCallback((force = false) => {
-    const welcomeAudio = welcomeAudioRef.current;
-    if (!welcomeAudio || (!isAudioEnabled && !force)) return;
+  const playBackgroundMusic = useCallback((force = false) => {
+    const backgroundMusic = backgroundMusicRef.current;
+    if (!backgroundMusic || (!isAudioEnabled && !force)) return;
 
-    if (hasStartedWelcomeAudioRef.current && !force) return;
-
-    welcomeAudio.currentTime = 0;
-    welcomeAudio.muted = false;
-    hasStartedWelcomeAudioRef.current = true;
-    welcomeAudio.play().catch(() => {
-      hasStartedWelcomeAudioRef.current = false;
-      if (force || isAudioEnabled) {
-        setIsAudioEnabled(false);
-        sessionStorage.setItem(AUDIO_ENABLED_SESSION_KEY, 'false');
-      }
-    });
-  }, [isAudioEnabled]);
-
-  const playHeroAudio = useCallback((force = false) => {
-    const heroAudio = heroAudioRef.current;
-    if (!heroAudio || (!isAudioEnabled && !force)) return;
-
-    heroAudio.currentTime = 0;
-    heroAudio.muted = false;
-    hasStartedHeroAudioRef.current = true;
-    heroAudio.play().catch(() => {
-      hasStartedHeroAudioRef.current = false;
-      setIsAudioEnabled(false);
-      sessionStorage.setItem(AUDIO_ENABLED_SESSION_KEY, 'false');
-    });
+    backgroundMusic.volume = 0.32;
+    backgroundMusic.play().catch(() => {});
   }, [isAudioEnabled]);
 
   useEffect(() => {
-    if (hasEntered || isWelcomeLeaving || hasStartedWelcomeAudioRef.current) return;
+    const backgroundMusic = backgroundMusicRef.current;
+    if (!backgroundMusic) return undefined;
 
-    playWelcomeAudio(true);
-  }, [hasEntered, isWelcomeLeaving, playWelcomeAudio]);
+    if (!hasEntered || !isAudioEnabled) {
+      backgroundMusic.pause();
+      return undefined;
+    }
 
-  useEffect(() => {
-    if (!hasEntered || isWelcomeLeaving || !isAudioEnabled || hasStartedHeroAudioRef.current) return;
-
-    playHeroAudio();
-  }, [hasEntered, isWelcomeLeaving, isAudioEnabled, playHeroAudio]);
+    playBackgroundMusic();
+    return undefined;
+  }, [hasEntered, isAudioEnabled, playBackgroundMusic]);
 
   function enterPortfolio(shouldPlayMusic) {
     if (isWelcomeLeaving) return;
@@ -423,20 +462,11 @@ function App() {
     setIsAudioEnabled(shouldPlayMusic);
     setIsWelcomeLeaving(true);
 
-    if (shouldPlayMusic) {
-      playWelcomeAudio(true);
-    }
+    if (shouldPlayMusic) playBackgroundMusic(true);
 
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     window.setTimeout(() => {
-      const welcomeAudio = welcomeAudioRef.current;
-      if (welcomeAudio) {
-        welcomeAudio.pause();
-        welcomeAudio.currentTime = 0;
-      }
-
       setHasEntered(true);
-      if (shouldPlayMusic) playHeroAudio(true);
     }, reduceMotion ? 0 : 520);
   }
 
@@ -446,16 +476,15 @@ function App() {
     sessionStorage.setItem(AUDIO_ENABLED_SESSION_KEY, String(nextAudioEnabled));
 
     if (nextAudioEnabled) {
-      playHeroAudio(true);
+      playBackgroundMusic(true);
       return;
     }
 
-    [welcomeAudioRef.current, heroAudioRef.current, clickAudioRef.current].forEach((audio) => {
+    [backgroundMusicRef.current, clickAudioRef.current].forEach((audio) => {
       if (!audio) return;
       audio.pause();
       audio.currentTime = 0;
     });
-    hasStartedHeroAudioRef.current = false;
   }
 
   return (
@@ -470,8 +499,7 @@ function App() {
         </div>
         <div className="liquid-background-noise" />
       </div>
-      <audio ref={welcomeAudioRef} preload="auto" src={welcomeAudioSrc} />
-      <audio ref={heroAudioRef} preload="auto" src={heroAudioSrc} />
+      <audio ref={backgroundMusicRef} preload="metadata" src={backgroundMusicSrc} loop />
       <audio ref={clickAudioRef} preload="auto" src={clickAudioSrc} />
 
       {!hasEntered && <WelcomeScreen isLeaving={isWelcomeLeaving} onButtonClick={playClickSound} onChoose={enterPortfolio} />}
@@ -521,28 +549,23 @@ function App() {
       {hasEntered && <CustomScrollbar onScrollTo={smoothScrollTo} />}
 
       {activePage === 'home' ? (
-        <main id="top" className={isHeroDocked ? 'portfolio-layout hero-is-docked' : 'portfolio-layout'}>
+        <main id="top" className={`portfolio-layout${isHeroDocked ? ' hero-is-docked' : ''}${isHomeRestored ? ' home-is-restored' : ''}`}>
           <Hero
             isDocked={isHeroDocked}
             onButtonClick={playClickSound}
             onScrollToSection={scrollToSection}
-            onHoverAudio={() => {
-              if (isAudioEnabled) {
-                playHeroAudio(true);
-              }
-            }}
           />
           <div className="portfolio-content">
             <About />
-            <Projects projects={portfolioContent.projects} onOpenPage={() => openDetailPage('productStories')} />
-            <Experience carouselItems={earlyChapterCarouselItems} onOpenPage={() => openDetailPage('earlyChapters')} />
+            <Projects presentation={presentation.projects} projects={portfolioContent.projects} onOpenPage={() => openDetailPage('productStories')} />
+            <Experience carouselItems={earlyChapterCarouselItems} presentation={presentation.earlyChapters.home} onOpenPage={() => openDetailPage('earlyChapters')} />
             <Contact />
           </div>
         </main>
       ) : (
         <main id="top" className="detail-page">
-          {activePage === 'productStories' && <ProductStoriesPage projects={portfolioContent.projects} onBack={returnHome} />}
-          {activePage === 'earlyChapters' && <EarlyChaptersPage items={earlyChapterRoadmapItems} onBack={returnHome} onImageOpen={setLightboxImage} />}
+          {activePage === 'productStories' && <ProductStoriesPage presentation={presentation.projects} projects={portfolioContent.projects} onBack={returnHome} />}
+          {activePage === 'earlyChapters' && <EarlyChaptersPage items={earlyChapterRoadmapItems} presentation={presentation.earlyChapters.detail} onBack={returnHome} onImageOpen={setLightboxImage} />}
         </main>
       )}
 
@@ -798,14 +821,13 @@ function WelcomeScreen({ isLeaving, onButtonClick, onChoose }) {
   );
 }
 
-function Hero({ isDocked, onButtonClick, onScrollToSection, onHoverAudio }) {
+function Hero({ isDocked, onButtonClick, onScrollToSection }) {
   const [hasMascotImage, setHasMascotImage] = useState(true);
 
   return (
     <section
       className={isDocked ? 'hero hero-centered section is-docked' : 'hero hero-centered section'}
       aria-labelledby="hero-title"
-      onMouseEnter={onHoverAudio}
     >
       <div className="hero-glass-card" aria-hidden="true" />
       <div className={hasMascotImage ? 'mascot-frame has-mascot-image' : 'mascot-frame'}>
@@ -883,39 +905,41 @@ function About() {
   );
 }
 
-function Projects({ onOpenPage, projects }) {
+function Projects({ onOpenPage, presentation, projects }) {
+  const { home } = presentation;
+
   return (
     <section id="projects" className="section magnetic-bento" aria-labelledby="projects-title">
       <SectionIntro
-        eyebrow="02 · selected work"
-        title="Projects in motion."
-        description="Drag through the wall to explore the product stories as they take shape."
-        actionLabel="View product stories"
+        eyebrow={home.eyebrow}
+        title={home.title}
+        description={home.description}
+        actionLabel={home.actionLabel}
         onAction={onOpenPage}
       />
       <div className="projects-bento-wall magnetic-bento-card">
         <DriftWall projects={projects} />
       </div>
       <article className="projects-bento-note glass-panel magnetic-bento-card">
-        <img src="/projects/ginsight/ginsight 1.png" alt="Ginsight product preview" loading="lazy" />
-        <p>Product stories</p>
+        {home.storyImage && <img src={home.storyImage} alt={home.storyImageAlt || ''} loading="lazy" />}
+        <p>{home.storyLabel}</p>
       </article>
       <article className="projects-bento-status glass-panel magnetic-bento-card">
-        <img src="/Learning/asean.png" alt="ASEAN learning certificate" loading="lazy" />
-        <p>Always learning</p>
+        {home.learningImage && <img src={home.learningImage} alt={home.learningImageAlt || ''} loading="lazy" />}
+        <p>{home.learningLabel}</p>
       </article>
     </section>
   );
 }
 
-function Experience({ onOpenPage, carouselItems }) {
+function Experience({ onOpenPage, carouselItems, presentation }) {
   return (
     <section id="experience" className="section magnetic-bento" aria-labelledby="experience-title">
       <SectionIntro
-        eyebrow="03 · learning in public"
-        title="The early chapters."
-        description="Explore the moments shaping Chad&apos;s early path in AI engineering."
-        actionLabel="Explore early chapters"
+        eyebrow={presentation.eyebrow}
+        title={presentation.title}
+        description={presentation.description}
+        actionLabel={presentation.actionLabel}
         onAction={onOpenPage}
       />
       <div className="experience-carousel magnetic-bento-card">
@@ -1001,24 +1025,26 @@ function DetailPageHeader({ eyebrow, title, description, onBack }) {
   );
 }
 
-function ProductStoriesPage({ onBack, projects }) {
+function ProductStoriesPage({ onBack, presentation, projects }) {
   return (
     <div className="detail-page-content">
       <DetailPageHeader
-        eyebrow="Selected work · product stories"
-        title="The stories behind the work."
-        description="A dedicated space for the products, experiments, and ideas that are taking shape."
+        eyebrow={presentation.detail.eyebrow}
+        title={presentation.detail.title}
+        description={presentation.detail.description}
         onBack={onBack}
       />
       <section className="product-stories-detail" aria-labelledby="product-stories-title">
         <article className="product-story-feature glass-panel">
-          <div className="product-story-feature-media">
-            <img src="/projects/ginsight/ginsight 1.png" alt="Ginsight product preview" />
-          </div>
+          {presentation.storyFeature.image && (
+            <div className="product-story-feature-media">
+              <img src={presentation.storyFeature.image} alt={presentation.storyFeature.imageAlt || ''} />
+            </div>
+          )}
           <div className="product-story-feature-copy">
-            <p className="eyebrow">Featured preview</p>
-            <h2 id="product-stories-title">Product stories in progress.</h2>
-            <p>Each story will bring together the problem, the process, and the human impact behind the work.</p>
+            <p className="eyebrow">{presentation.storyFeature.eyebrow}</p>
+            <h2 id="product-stories-title">{presentation.storyFeature.title}</h2>
+            <p>{presentation.storyFeature.description}</p>
           </div>
         </article>
         <div className="product-stories-wall">
@@ -1029,13 +1055,13 @@ function ProductStoriesPage({ onBack, projects }) {
   );
 }
 
-function EarlyChaptersPage({ onBack, items, onImageOpen }) {
+function EarlyChaptersPage({ onBack, items, presentation, onImageOpen }) {
   return (
     <div className="detail-page-content">
       <DetailPageHeader
-        eyebrow="Learning in public · early chapters"
-        title="A roadmap of curiosity."
-        description="The people, experiments, and learning moments that are gradually shaping an AI engineering journey."
+        eyebrow={presentation.eyebrow}
+        title={presentation.title}
+        description={presentation.description}
         onBack={onBack}
       />
       <section className="early-chapters-roadmap" aria-label="Early chapters roadmap">
