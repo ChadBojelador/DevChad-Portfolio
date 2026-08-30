@@ -425,15 +425,22 @@ function App() {
     return () => observer.disconnect();
   }, [hasEntered, activePage]);
 
-  function playClickSound() {
+  const lastClickSoundTimeRef = useRef(0);
+
+  const playClickSound = useCallback(() => {
     if (!isAudioEnabled) return;
+
+    const now = Date.now();
+    if (now - lastClickSoundTimeRef.current < 110) return;
+    lastClickSoundTimeRef.current = now;
 
     const clickAudio = clickAudioRef.current;
     if (!clickAudio) return;
 
     clickAudio.currentTime = 0;
+    clickAudio.volume = 0.4;
     clickAudio.play().catch(() => {});
-  }
+  }, [isAudioEnabled]);
 
   const playBackgroundMusic = useCallback((force = false) => {
     const backgroundMusic = backgroundMusicRef.current;
@@ -455,6 +462,19 @@ function App() {
     playBackgroundMusic();
     return undefined;
   }, [hasEntered, isAudioEnabled, playBackgroundMusic]);
+
+  useEffect(() => {
+    const handleGlobalClick = (event) => {
+      const interactiveTarget = event.target instanceof Element ? event.target.closest('button, a, [role="button"]') : null;
+      if (!interactiveTarget) return;
+      if (event.defaultPrevented) return;
+      if (interactiveTarget.closest('[data-suppress-click-sound="true"]')) return;
+      playClickSound();
+    };
+
+    document.addEventListener('click', handleGlobalClick, true);
+    return () => document.removeEventListener('click', handleGlobalClick, true);
+  }, [playClickSound]);
 
   function enterPortfolio(shouldPlayMusic) {
     if (isWelcomeLeaving) return;
@@ -504,14 +524,13 @@ function App() {
       <audio ref={backgroundMusicRef} preload="metadata" src={backgroundMusicSrc} loop />
       <audio ref={clickAudioRef} preload="auto" src={clickAudioSrc} />
 
-      {!hasEntered && <WelcomeScreen isLeaving={isWelcomeLeaving} onButtonClick={playClickSound} onChoose={enterPortfolio} />}
+      {!hasEntered && <WelcomeScreen isLeaving={isWelcomeLeaving} onChoose={enterPortfolio} />}
 
       <aside className="utility-dock" aria-label="Portfolio controls">
         <button
           className="icon-button"
           type="button"
           onClick={() => {
-            playClickSound();
             setTheme((currentTheme) => currentTheme === 'light' ? 'dark' : 'light');
           }}
           aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`}
@@ -522,10 +541,7 @@ function App() {
         <button
           className="icon-button audio-toggle"
           type="button"
-          onClick={() => {
-            playClickSound();
-            toggleAudio();
-          }}
+          onClick={toggleAudio}
           aria-label={isAudioEnabled ? 'Mute sounds' : 'Unmute sounds'}
           title={isAudioEnabled ? 'Mute sounds' : 'Unmute sounds'}
           data-audio-state={isAudioEnabled ? 'on' : 'off'}
@@ -536,10 +552,7 @@ function App() {
         <button
           className="icon-button admin-mode-button"
           type="button"
-          onClick={() => {
-            playClickSound();
-            setIsAdminOpen(true);
-          }}
+          onClick={() => setIsAdminOpen(true)}
           aria-label="Open admin controls"
           title="Open admin controls"
         >
@@ -554,7 +567,6 @@ function App() {
         <main id="top" className={`portfolio-layout${isHeroDocked ? ' hero-is-docked' : ''}${isHomeRestored ? ' home-is-restored' : ''}`}>
           <Hero
             isDocked={isHeroDocked}
-            onButtonClick={playClickSound}
             onScrollToSection={scrollToSection}
           />
           <div className="portfolio-content">
@@ -575,7 +587,6 @@ function App() {
         <ChatMascot
           isOpen={isChatOpen}
           onToggle={() => setIsChatOpen((currentState) => !currentState)}
-          onButtonClick={playClickSound}
         />
       )}
 
@@ -725,9 +736,8 @@ function CustomScrollbar({ onScrollTo }) {
   );
 }
 
-function ChatMascot({ isOpen, onToggle, onButtonClick }) {
+function ChatMascot({ isOpen, onToggle }) {
   function toggleChat() {
-    onButtonClick();
     onToggle();
   }
 
@@ -765,7 +775,7 @@ function ChatMascot({ isOpen, onToggle, onButtonClick }) {
   );
 }
 
-function WelcomeScreen({ isLeaving, onButtonClick, onChoose }) {
+function WelcomeScreen({ isLeaving, onChoose }) {
   return (
     <section className={isLeaving ? 'welcome-screen is-leaving' : 'welcome-screen'} aria-labelledby="welcome-title">
       <div className="aurora aurora-one" />
@@ -790,10 +800,7 @@ function WelcomeScreen({ isLeaving, onButtonClick, onChoose }) {
             shineFade={25}
             thickness={1.2}
             disabled={isLeaving}
-            onClick={() => {
-              onButtonClick();
-              onChoose(true);
-            }}
+            onClick={() => onChoose(true)}
           >
             I&apos;m in the mood <span aria-hidden="true">→</span>
           </SpecularButton>
@@ -811,9 +818,7 @@ function WelcomeScreen({ isLeaving, onButtonClick, onChoose }) {
             shineFade={28}
             thickness={1.1}
             disabled={isLeaving}
-            onClick={() => {
-              onChoose(false);
-            }}
+            onClick={() => onChoose(false)}
           >
             I&apos;m not in the mood
           </SpecularButton>
@@ -823,7 +828,7 @@ function WelcomeScreen({ isLeaving, onButtonClick, onChoose }) {
   );
 }
 
-function Hero({ isDocked, onButtonClick, onScrollToSection }) {
+function Hero({ isDocked, onScrollToSection }) {
   const [hasMascotImage, setHasMascotImage] = useState(true);
 
   return (
@@ -858,10 +863,7 @@ function Hero({ isDocked, onButtonClick, onScrollToSection }) {
             shineSize={24}
             shineFade={25}
             thickness={1.2}
-            onClick={() => {
-              onButtonClick();
-              onScrollToSection('projects');
-            }}
+            onClick={() => onScrollToSection('projects')}
           >
             Explore projects <span aria-hidden="true">↓</span>
           </SpecularButton>
@@ -878,10 +880,7 @@ function Hero({ isDocked, onButtonClick, onScrollToSection }) {
             shineSize={22}
             shineFade={28}
             thickness={1.1}
-            onClick={() => {
-              onButtonClick();
-              onScrollToSection('contact');
-            }}
+            onClick={() => onScrollToSection('contact')}
           >
             Let&apos;s connect
           </SpecularButton>

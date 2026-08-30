@@ -99,7 +99,7 @@ function DriftWall({ projects, interactive = false }) {
                   {project.github && <a href={project.github}>GitHub ↗</a>}
                   {project.liveDemo && <a href={project.liveDemo}>Live demo ↗</a>}
                   {project.caseStudy && <a href={project.caseStudy}>Case study ↗</a>}
-                </div> : <span className="coming-soon">Details coming soon</span>)}
+                </div> : <span className="coming-soon">Details coming soon</span>}
               </div>
             </article>
           );
