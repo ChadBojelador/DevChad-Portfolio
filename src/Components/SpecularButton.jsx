@@ -65,7 +65,7 @@ function SpecularButton({
   tint = '#ffffff',
   tintOpacity = 0,
   blur = 0,
-  textColor = '#f5f5f5',
+  textColor = '#071018',
   lineColor = '#ffffff',
   baseColor = '#525252',
   intensity = 1,

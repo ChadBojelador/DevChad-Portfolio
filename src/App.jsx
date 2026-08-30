@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
+import DepthCarousel from './Components/DepthCarousel';
 import DriftWall from './Components/DriftWall';
 import SpecularButton from './Components/SpecularButton';
-import { contactLinks, experienceItems, projects } from './data/portfolioData';
+import { contactLinks, earlyChapterCarouselItems, projects } from './data/portfolioData';
 import './App.css';
 
 const WELCOME_SESSION_KEY = 'chad-portfolio-welcome-seen';
@@ -54,7 +55,7 @@ function App() {
     let animationFrame;
 
     const updateHeroPosition = () => {
-      const shouldDock = desktopViewport.matches && window.scrollY > 48;
+      const shouldDock = desktopViewport.matches && window.scrollY >= window.innerHeight * 2;
       setIsHeroDocked((currentState) => currentState === shouldDock ? currentState : shouldDock);
       animationFrame = undefined;
     };
@@ -323,7 +324,7 @@ function Hero({ isDocked, onButtonClick }) {
       </div>
       <div className="hero-copy">
         <h1 id="hero-title">Meet Chad!</h1>
-        <p className="hero-role">An AI Engineer creating thoughtful tools for real people.</p>
+        <p className="hero-role">An AI Engineer creating thoughtful solutions for real people</p>
         <p className="hero-description">I&apos;m interested in the human side of intelligent technology: where useful systems, considerate design, and curiosity meet.</p>
         <div className="hero-actions">
           <SpecularButton
@@ -375,7 +376,7 @@ function Hero({ isDocked, onButtonClick }) {
 function About() {
   return (
     <section id="about" className="section about-section" aria-labelledby="about-title">
-      <div className="about-quote glass-panel">
+      <div className="about-quote glass-panel scroll-reveal section-card-reveal">
         <span className="quote-mark quote-mark-open" aria-hidden="true">“</span>
         <div>
           <p className="eyebrow">01 · about</p>
@@ -411,14 +412,32 @@ function Experience() {
   return (
     <section id="experience" className="section magnetic-bento" aria-labelledby="experience-title">
       <SectionIntro eyebrow="03 · learning in public" title="The early chapters." description="Hackathons, certifications, and milestones will live here as they take shape." />
-      <div className="experience-categories">
-        {experienceItems.map((item) => <ExperienceCategory key={item.title} item={item} />)}
+      <div className="experience-carousel glass-panel magnetic-bento-card">
+        <div className="experience-carousel-heading">
+          <p className="panel-label">A work in progress</p>
+          <p>Explore the moments shaping Chad&apos;s early path in AI engineering.</p>
+        </div>
+        <div className="experience-depth-carousel">
+          <DepthCarousel
+            items={earlyChapterCarouselItems}
+            depth={220}
+            spread={90}
+            tilt={22}
+            tiltDirection="right"
+            perspective={1400}
+            visibleCards={4}
+            falloff={0.2}
+            blur={6}
+            autoplay
+            loop
+          />
+        </div>
       </div>
     </section>
   );
 }
 
-function ExperienceCategory({ item }) {
+export function ExperienceCategory({ item }) {
   const galleryRef = useRef(null);
 
   function scrollGallery(direction) {
@@ -469,7 +488,7 @@ function ExperienceCategory({ item }) {
 function Contact() {
   return (
     <section id="contact" className="section contact-section" aria-labelledby="contact-title">
-      <div className="contact-card glass-panel">
+      <div className="contact-card glass-panel scroll-reveal section-card-reveal">
         <p className="eyebrow">04 · get in touch</p>
         <h2 id="contact-title">Let&apos;s make something meaningful.</h2>
         <p>I&apos;m always open to conversations about AI engineering, creative technology, and opportunities to grow.</p>

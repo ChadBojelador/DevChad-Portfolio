@@ -74,3 +74,26 @@ export const contactLinks = [
   { label: 'Email', href: 'mailto:chadbojelador9@gmail.com' },
   { label: 'LinkedIn', href: 'https://www.linkedin.com/in/chad-bojelador/' },
 ];
+
+export const earlyChapterCarouselItems = [
+  {
+    image: '/early-chapters/hackathon-build.jpg',
+    alt: 'Editorial illustration of two laptops and translucent blue glass panels on a desk.',
+  },
+  {
+    image: '/early-chapters/hackathon-ideas.jpg',
+    alt: 'Editorial illustration of a minimal ideas board with geometric forms and notes.',
+  },
+  {
+    image: '/early-chapters/learning-focus.jpg',
+    alt: 'Editorial illustration of a tablet, notebook, pencil, and blue glass sphere on a study desk.',
+  },
+  {
+    image: '/early-chapters/learning-milestone.jpg',
+    alt: 'Editorial illustration of ascending translucent blue glass steps beside an open notebook.',
+  },
+  {
+    image: '/mascot/b561733f677eb2a8c395c97b16db4964.jpg',
+    alt: 'Converly project cover.',
+  },
+];
