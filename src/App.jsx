@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import DepthCarousel from './Components/DepthCarousel';
 import DriftWall from './Components/DriftWall';
 import SpecularButton from './Components/SpecularButton';
@@ -6,18 +6,23 @@ import { contactLinks, earlyChapterCarouselItems, projects } from './data/portfo
 import './App.css';
 
 const WELCOME_SESSION_KEY = 'chad-portfolio-welcome-seen';
+const AUDIO_ENABLED_SESSION_KEY = 'chad-portfolio-audio-enabled';
 const THEME_STORAGE_KEY = 'chad-portfolio-theme';
-const backgroundAudioSrc = import.meta.env.VITE_BACKGROUND_AUDIO_URL ?? '';
+const welcomeAudioSrc = '/mascot/sounds/startup.MP3';
+const heroAudioSrc = '/mascot/sounds/startup2.MP3';
 const clickAudioSrc = '/mascot/sounds/click.mp3';
 const mascotSrc = '/mascot/chad-mascot.png';
 const chatMascotSrc = '/mascot/chatmascot.webp';
 
 function App() {
-  const audioRef = useRef(null);
+  const welcomeAudioRef = useRef(null);
+  const heroAudioRef = useRef(null);
   const clickAudioRef = useRef(null);
+  const hasStartedHeroAudioRef = useRef(false);
   const [hasEntered, setHasEntered] = useState(() => sessionStorage.getItem(WELCOME_SESSION_KEY) === 'true');
   const [isWelcomeLeaving, setIsWelcomeLeaving] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
+  const [isAudioEnabled, setIsAudioEnabled] = useState(() => sessionStorage.getItem(AUDIO_ENABLED_SESSION_KEY) === 'true');
+  const isMuted = !isAudioEnabled;
   const [theme, setTheme] = useState(() => localStorage.getItem(THEME_STORAGE_KEY) ?? 'light');
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isHeroDocked, setIsHeroDocked] = useState(false);
@@ -55,7 +60,7 @@ function App() {
     let animationFrame;
 
     const updateHeroPosition = () => {
-      const shouldDock = desktopViewport.matches && window.scrollY >= window.innerHeight * 2;
+      const shouldDock = desktopViewport.matches && window.scrollY > 36;
       setIsHeroDocked((currentState) => currentState === shouldDock ? currentState : shouldDock);
       animationFrame = undefined;
     };
@@ -100,6 +105,8 @@ function App() {
   }, [hasEntered]);
 
   function playClickSound() {
+    if (!isAudioEnabled) return;
+
     const clickAudio = clickAudioRef.current;
     if (!clickAudio) return;
 
@@ -107,32 +114,72 @@ function App() {
     clickAudio.play().catch(() => {});
   }
 
+  const playHeroAudio = useCallback((force = false) => {
+    const heroAudio = heroAudioRef.current;
+    if (!heroAudio || (!isAudioEnabled && !force)) return;
+
+    heroAudio.currentTime = 0;
+    heroAudio.muted = false;
+    hasStartedHeroAudioRef.current = true;
+    heroAudio.play().catch(() => {
+      hasStartedHeroAudioRef.current = false;
+      setIsAudioEnabled(false);
+      sessionStorage.setItem(AUDIO_ENABLED_SESSION_KEY, 'false');
+    });
+  }, [isAudioEnabled]);
+
+  useEffect(() => {
+    if (!hasEntered || isWelcomeLeaving || !isAudioEnabled || hasStartedHeroAudioRef.current) return;
+
+    playHeroAudio();
+  }, [hasEntered, isWelcomeLeaving, isAudioEnabled, playHeroAudio]);
+
   function enterPortfolio(shouldPlayMusic) {
     if (isWelcomeLeaving) return;
 
     sessionStorage.setItem(WELCOME_SESSION_KEY, 'true');
+    sessionStorage.setItem(AUDIO_ENABLED_SESSION_KEY, String(shouldPlayMusic));
+    setIsAudioEnabled(shouldPlayMusic);
     setIsWelcomeLeaving(true);
 
-    if (shouldPlayMusic && audioRef.current && backgroundAudioSrc) {
-      audioRef.current.muted = false;
-      audioRef.current.play().catch(() => setIsMuted(true));
+    if (shouldPlayMusic && welcomeAudioRef.current) {
+      welcomeAudioRef.current.currentTime = 0;
+      welcomeAudioRef.current.muted = false;
+      welcomeAudioRef.current.play().catch(() => {
+        setIsAudioEnabled(false);
+        sessionStorage.setItem(AUDIO_ENABLED_SESSION_KEY, 'false');
+      });
     }
 
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    window.setTimeout(() => setHasEntered(true), reduceMotion ? 0 : 520);
+    window.setTimeout(() => {
+      const welcomeAudio = welcomeAudioRef.current;
+      if (welcomeAudio) {
+        welcomeAudio.pause();
+        welcomeAudio.currentTime = 0;
+      }
+
+      setHasEntered(true);
+      if (shouldPlayMusic) playHeroAudio(true);
+    }, reduceMotion ? 0 : 520);
   }
 
   function toggleAudio() {
-    const audio = audioRef.current;
-    if (!audio || !backgroundAudioSrc) return;
+    const nextAudioEnabled = !isAudioEnabled;
+    setIsAudioEnabled(nextAudioEnabled);
+    sessionStorage.setItem(AUDIO_ENABLED_SESSION_KEY, String(nextAudioEnabled));
 
-    const nextMuted = !isMuted;
-    audio.muted = nextMuted;
-    setIsMuted(nextMuted);
-
-    if (!nextMuted) {
-      audio.play().catch(() => setIsMuted(true));
+    if (nextAudioEnabled) {
+      playHeroAudio(true);
+      return;
     }
+
+    [welcomeAudioRef.current, heroAudioRef.current, clickAudioRef.current].forEach((audio) => {
+      if (!audio) return;
+      audio.pause();
+      audio.currentTime = 0;
+    });
+    hasStartedHeroAudioRef.current = false;
   }
 
   return (
@@ -147,7 +194,8 @@ function App() {
         </div>
         <div className="liquid-background-noise" />
       </div>
-      {backgroundAudioSrc && <audio ref={audioRef} loop src={backgroundAudioSrc} />}
+      <audio ref={welcomeAudioRef} preload="auto" src={welcomeAudioSrc} />
+      <audio ref={heroAudioRef} preload="auto" src={heroAudioSrc} />
       <audio ref={clickAudioRef} preload="auto" src={clickAudioSrc} />
 
       {!hasEntered && <WelcomeScreen isLeaving={isWelcomeLeaving} onButtonClick={playClickSound} onChoose={enterPortfolio} />}
@@ -166,16 +214,17 @@ function App() {
           {theme === 'light' ? '◐' : '☼'}
         </button>
         <button
-          className="icon-button"
+          className="icon-button audio-toggle"
           type="button"
           onClick={() => {
             playClickSound();
             toggleAudio();
           }}
-          aria-label={backgroundAudioSrc ? (isMuted ? 'Unmute background music' : 'Mute background music') : 'Background music is not configured'}
-          title={backgroundAudioSrc ? (isMuted ? 'Unmute music' : 'Mute music') : 'Add VITE_BACKGROUND_AUDIO_URL to enable music'}
-          disabled={!backgroundAudioSrc}
+          aria-label={isAudioEnabled ? 'Mute sounds' : 'Unmute sounds'}
+          title={isAudioEnabled ? 'Mute sounds' : 'Unmute sounds'}
+          data-audio-state={isAudioEnabled ? 'on' : 'off'}
         >
+          <span className="audio-toggle-label">{isAudioEnabled ? 'Sound on' : 'Sound off'}</span>
           {isMuted ? '♪̸' : '♪'}
         </button>
       </aside>
@@ -292,7 +341,6 @@ function WelcomeScreen({ isLeaving, onButtonClick, onChoose }) {
             thickness={1.1}
             disabled={isLeaving}
             onClick={() => {
-              onButtonClick();
               onChoose(false);
             }}
           >
@@ -312,7 +360,7 @@ function Hero({ isDocked, onButtonClick }) {
   }
 
   return (
-    <section id="top" className={isDocked ? 'hero hero-centered section is-docked' : 'hero hero-centered section'} aria-labelledby="hero-title">
+    <section className={isDocked ? 'hero hero-centered section is-docked' : 'hero hero-centered section'} aria-labelledby="hero-title">
       <div className="hero-glass-card" aria-hidden="true" />
       <div className={hasMascotImage ? 'mascot-frame has-mascot-image' : 'mascot-frame'}>
         {hasMascotImage ? <img src={mascotSrc} alt="Chad's mascot" onError={() => setHasMascotImage(false)} /> : (

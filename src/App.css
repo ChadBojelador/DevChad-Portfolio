@@ -1,4 +1,5 @@
 :root {
+  --anchor-offset: 5.5rem;
   --background: #f5fbff;
   --background-deep: #e3f4ff;
   --surface: rgba(255, 255, 255, 0.72);
@@ -145,7 +146,7 @@
 .chat-mascot-avatar img { display: block; width: 3rem; max-width: none; height: 4.3rem; object-fit: contain; object-position: center bottom; transform: translateY(0.28rem); }
 .chat-launcher-label { padding-bottom: 0.04rem; white-space: nowrap; }
 
-.section { width: min(1120px, calc(100% - 2rem)); margin: 0 auto; padding: clamp(5.5rem, 12vw, 9.5rem) 0; scroll-margin-top: 1rem; }
+.section { width: min(1120px, calc(100% - 2rem)); margin: 0 auto; padding: clamp(5.5rem, 12vw, 9.5rem) 0; scroll-margin-top: var(--anchor-offset); }
 .hero { position: relative; display: grid; overflow: visible; min-height: 100svh; padding-top: clamp(3.5rem, 7vw, 5.5rem); padding-bottom: clamp(2.5rem, 6vw, 4.5rem); isolation: isolate; justify-items: center; text-align: center; transition: width 1000ms cubic-bezier(0.16, 1, 0.3, 1), margin 1000ms cubic-bezier(0.16, 1, 0.3, 1), padding 1000ms cubic-bezier(0.16, 1, 0.3, 1), text-align 480ms cubic-bezier(0.16, 1, 0.3, 1); }
 .hero-glass-card { position: absolute; z-index: 0; top: clamp(1.25rem, 3vw, 2.5rem); right: 0; bottom: clamp(1.25rem, 3vw, 2.5rem); left: 0; width: min(56rem, 94%); height: auto; margin: 0 auto; border: 1px solid rgba(255, 255, 255, 0.76); border-radius: 1.4rem; background: linear-gradient(145deg, rgba(255, 255, 255, 0.66), rgba(230, 247, 255, 0.32)); box-shadow: 0 30px 70px rgba(16, 117, 190, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.86); backdrop-filter: blur(28px) saturate(118%); -webkit-backdrop-filter: blur(28px) saturate(118%); transform: none; transition: inset 1000ms cubic-bezier(0.16, 1, 0.3, 1), width 1000ms cubic-bezier(0.16, 1, 0.3, 1), border-radius 1000ms cubic-bezier(0.16, 1, 0.3, 1); }
 .hero-glass-card::before, .hero-glass-card::after { position: absolute; border-radius: inherit; content: ''; }
@@ -253,12 +254,20 @@
 .aurora { position: absolute; border-radius: 50%; filter: blur(25px); opacity: 0.52; }
 .aurora-one { width: 34rem; height: 34rem; top: -14rem; left: -12rem; background: #a4dcff; animation: aurora-drift 8s ease-in-out infinite alternate; }
 .aurora-two { width: 28rem; height: 28rem; right: -12rem; bottom: -15rem; background: #59b6ed; animation: aurora-drift 10s ease-in-out infinite alternate-reverse; }
-.welcome-card { position: relative; z-index: 1; width: min(100%, 39rem); padding: clamp(2rem, 7vw, 4.5rem); border: none; color: var(--text); background: transparent; box-shadow: none; text-align: center; transform-origin: center 58%; animation: welcome-card-pop-in 780ms 90ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+.welcome-card { position: relative; z-index: 1; width: min(100%, 39rem); padding: clamp(2rem, 7vw, 4.5rem); border: 1px solid rgba(255, 255, 255, 0.74); color: var(--text); background: linear-gradient(145deg, rgba(255, 255, 255, 0.84), rgba(225, 244, 255, 0.58)); box-shadow: 0 26px 64px rgba(19, 117, 189, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.86); text-align: center; transform-origin: center 58%; animation: welcome-card-pop-in 780ms 90ms cubic-bezier(0.16, 1, 0.3, 1) both; }
 .welcome-card .eyebrow { color: var(--accent); }
 .orbital-icon { display: grid; width: 4.7rem; height: 4.7rem; padding: 4px; margin: 0 auto 2rem; border: 1px solid rgba(72, 165, 229, 0.45); border-radius: 50%; place-items: center; transform: rotate(13deg); box-shadow: 0 13px 35px rgba(19, 117, 189, 0.15); }
 .orbital-icon span { display: grid; width: 100%; height: 100%; border-radius: 50%; color: white; background: linear-gradient(145deg, #55b5ee, #0875c7); place-items: center; font-size: 1.6rem; transform: rotate(-13deg); }
 .welcome-card h1 { max-width: 10ch; margin: 0 auto; color: var(--accent); font-size: clamp(2.55rem, 8vw, 4.5rem); letter-spacing: -0.075em; line-height: 0.98; }
 .welcome-card > p:not(.eyebrow) { max-width: 27rem; margin: 1.25rem auto 2rem; color: var(--muted); line-height: 1.65; }
+.welcome-actions { align-items: stretch; width: min(100%, 31rem); margin: 0 auto; }
+.welcome-actions .specular-button { flex: 1 1 13rem; min-height: 3.5rem; padding-inline: 1.4rem; }
+.welcome-actions .brand-specular-button--primary { --sb-text-color: #f8fdff !important; background: linear-gradient(135deg, #0878cc, #5b54cf); box-shadow: 0 14px 28px rgba(16, 117, 190, 0.26); }
+.welcome-actions .brand-specular-button--soft { --sb-text-color: #075f9f !important; border: 1px solid rgba(8, 120, 204, 0.24); background: rgba(255, 255, 255, 0.72); box-shadow: 0 10px 22px rgba(19, 117, 189, 0.1); }
+.welcome-actions .brand-specular-button--soft:hover { border-color: rgba(8, 120, 204, 0.5); background: rgba(255, 255, 255, 0.94); }
+.audio-toggle { width: auto; min-width: 5.75rem; padding: 0 0.75rem; font-size: 0; font-weight: 800; white-space: nowrap; }
+.audio-toggle-label { font-size: 0.72rem; }
+.audio-toggle[data-audio-state='on'] { color: var(--accent); }
 .welcome-screen.is-leaving { pointer-events: none; animation: welcome-screen-out 520ms cubic-bezier(0.4, 0, 1, 1) both; }
 .welcome-screen.is-leaving .welcome-card { animation: welcome-card-pop-out 460ms cubic-bezier(0.4, 0, 1, 1) both; }
 .welcome-screen.is-leaving .aurora { opacity: 0; transition: opacity 380ms ease; }
@@ -415,10 +424,13 @@
 
 :root[data-theme='dark'] .welcome-screen { background: var(--liquid-base); }
 :root[data-theme='dark'] .aurora { opacity: 0.3; }
+:root[data-theme='dark'] .welcome-card { border-color: var(--glass-highlight); background: linear-gradient(145deg, rgba(31, 38, 87, 0.78), rgba(11, 27, 61, 0.62)); box-shadow: var(--shadow), inset 0 1px 0 var(--glass-highlight); }
 :root[data-theme='dark'] .orbital-icon { border-color: color-mix(in srgb, var(--teal-accent) 48%, transparent); box-shadow: 0 13px 35px var(--glow-blue); }
 :root[data-theme='dark'] .orbital-icon span { color: var(--button-on-bright); background: linear-gradient(145deg, #95A5FF, var(--teal-accent)); }
 :root[data-theme='dark'] .welcome-card h1 { color: var(--text); }
 :root[data-theme='dark'] .welcome-card > p:not(.eyebrow) { color: var(--muted); }
+:root[data-theme='dark'] .welcome-actions .brand-specular-button--primary { --sb-text-color: var(--button-on-bright) !important; background: var(--button-primary-fill); }
+:root[data-theme='dark'] .welcome-actions .brand-specular-button--soft { --sb-text-color: var(--text) !important; border-color: var(--line); background: var(--button-secondary-fill); }
 
 :root[data-theme='dark'] :focus-visible { outline-color: var(--focus-ring); }
 @keyframes mascot-float { to { transform: translateY(-0.7rem) rotate(1.5deg); } }
@@ -433,12 +445,37 @@
 @keyframes welcome-screen-out { from { opacity: 1; filter: blur(0); } to { opacity: 0; filter: blur(7px); } }
 @keyframes welcome-card-pop-out { from { opacity: 1; filter: blur(0); transform: translateY(0) scale(1); } to { opacity: 0; filter: blur(12px); transform: translateY(-1.2rem) scale(1.045); } }
 @keyframes chat-panel-enter { from { opacity: 0; transform: translateY(0.65rem) scale(0.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes content-column-enter { from { opacity: 0.62; transform: translateX(2rem); } to { opacity: 1; transform: translateX(0); } }
 
 @media (min-width: 901px) {
-  .portfolio-layout > .hero { position: sticky; z-index: 3; top: 0; }
-  .portfolio-content { z-index: 1; transition: margin 1000ms cubic-bezier(0.16, 1, 0.3, 1), opacity 620ms cubic-bezier(0.16, 1, 0.3, 1), visibility 620ms ease; }
-  .portfolio-layout:not(.hero-is-docked) .portfolio-content { visibility: hidden; opacity: 0; pointer-events: none; }
-  .portfolio-layout.hero-is-docked .hero { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; width: clamp(22rem, 34vw, 31rem); height: 100svh; min-height: 100svh; padding: clamp(3.5rem, 6vw, 5.5rem) clamp(1.5rem, 3vw, 2.5rem); margin: 0 0 0 clamp(1rem, 3vw, 3.5rem); text-align: left; }
+  .portfolio-layout > .hero { position: relative; z-index: 1; }
+  .portfolio-content { position: relative; z-index: 1; }
+
+  .portfolio-layout.hero-is-docked {
+    display: grid;
+    grid-template-columns: clamp(22rem, 31vw, 31rem) minmax(0, 1fr);
+    gap: clamp(1.25rem, 3vw, 3.5rem);
+    align-items: start;
+  }
+
+  .portfolio-layout.hero-is-docked .hero {
+    position: sticky;
+    z-index: 3;
+    top: 0;
+    grid-column: 1;
+    grid-row: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    width: auto;
+    height: 100svh;
+    min-height: 100svh;
+    padding: clamp(3.5rem, 6vw, 5.5rem) clamp(1.5rem, 3vw, 2.5rem);
+    margin: 0 0 0 clamp(1rem, 3vw, 3.5rem);
+    text-align: left;
+  }
+
   .portfolio-layout.hero-is-docked .hero-glass-card { top: 1rem; right: 0; bottom: 1rem; left: 0; width: 100%; border-radius: 1.1rem; }
   .portfolio-layout.hero-is-docked .mascot-frame { flex: 0 0 auto; width: min(15.5rem, 46%); min-height: 0; margin: 0 0 0.65rem; }
   .portfolio-layout.hero-is-docked .hero-copy { max-width: 22rem; justify-items: start; }
@@ -446,8 +483,24 @@
   .portfolio-layout.hero-is-docked .hero-role { margin-top: 0.8rem; text-align: left; }
   .portfolio-layout.hero-is-docked .hero-description { margin: 1rem 0 1.5rem; text-align: left; }
   .portfolio-layout.hero-is-docked .hero-actions { justify-content: flex-start; }
-  .portfolio-layout.hero-is-docked .portfolio-content { margin-top: -100svh; margin-right: clamp(0.75rem, 2vw, 2.25rem); margin-left: calc(clamp(22rem, 34vw, 31rem) + clamp(2rem, 4vw, 5.5rem)); visibility: visible; opacity: 1; pointer-events: auto; }
-  .portfolio-layout.hero-is-docked .portfolio-content .section { width: min(100% - 1rem, 70rem); margin-right: 0; margin-left: 0; }
+
+  .portfolio-layout.hero-is-docked .portfolio-content {
+    grid-column: 2;
+    grid-row: 1;
+    min-width: 0;
+    padding-top: 100svh;
+    opacity: 1;
+    transform: translateX(0);
+    will-change: transform, opacity;
+    animation: content-column-enter 760ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    transition: opacity 520ms cubic-bezier(0.16, 1, 0.3, 1), transform 760ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .portfolio-layout.hero-is-docked .portfolio-content .section {
+    width: min(100%, 70rem);
+    margin-right: clamp(0.75rem, 2vw, 2.25rem);
+    margin-left: 0;
+  }
 }
 
 @media (min-width: 701px) {
@@ -476,6 +529,8 @@
   .quote-mark { font-size: 3.8rem; }
   .quote-mark-close { padding-top: 7rem; }
   .site-footer { gap: 0.8rem; flex-direction: column; }
+  .welcome-actions { flex-direction: column; }
+  .welcome-actions .specular-button { width: 100%; }
 }
 
 @media (max-width: 400px) {
