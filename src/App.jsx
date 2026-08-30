@@ -108,6 +108,8 @@ function normalisePortfolioContent(content) {
   const projects = Array.isArray(content?.projects) ? content.projects : defaults.projects;
   const timeline = Array.isArray(content?.earlyChapters?.timeline) ? content.earlyChapters.timeline : defaults.earlyChapters.timeline;
   const carousel = Array.isArray(content?.earlyChapters?.carousel) ? content.earlyChapters.carousel : defaults.earlyChapters.carousel;
+  const hasOutdatedRoadmap = timeline.some((item) => ['perspective', 'focused-learning', 'always-learning'].includes(item.id));
+  const roadmapTimeline = hasOutdatedRoadmap ? defaults.earlyChapters.timeline : timeline;
   const visibleCarousel = carousel.filter((item) => item.image !== '/early-chapters/IINTESS.jpg');
   const savedPresentation = content?.presentation ?? {};
   const savedHome = { ...savedPresentation.projects?.home };
@@ -126,8 +128,8 @@ function normalisePortfolioContent(content) {
       stack: Array.isArray(project.stack) ? project.stack : [],
     })),
     earlyChapters: {
-      direction: content?.earlyChapters?.direction === 'ascending' ? 'ascending' : 'descending',
-      timeline: timeline.map((item, index) => ({ ...item, id: item.id || `chapter-${index + 1}`, order: Number(item.order) || index + 1 })),
+      direction: hasOutdatedRoadmap ? 'ascending' : (content?.earlyChapters?.direction === 'descending' ? 'descending' : 'ascending'),
+      timeline: roadmapTimeline.map((item, index) => ({ ...item, id: item.id || `chapter-${index + 1}`, order: Number(item.order) || index + 1 })),
       carousel: visibleCarousel.map((item, index) => ({ ...item, id: item.id || `story-${index + 1}`, order: Number(item.order) || index + 1 })),
     },
     presentation: {
@@ -284,7 +286,6 @@ function App() {
   const [hasEntered, setHasEntered] = useState(() => sessionStorage.getItem(WELCOME_SESSION_KEY) === 'true');
   const [isWelcomeLeaving, setIsWelcomeLeaving] = useState(false);
   const [isAudioEnabled, setIsAudioEnabled] = useState(() => sessionStorage.getItem(AUDIO_ENABLED_SESSION_KEY) === 'true');
-  const isMuted = !isAudioEnabled;
   const [theme, setTheme] = useState(() => localStorage.getItem(THEME_STORAGE_KEY) ?? 'light');
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isHeroDocked, setIsHeroDocked] = useState(false);
@@ -524,6 +525,10 @@ function App() {
     });
   }
 
+  function toggleTheme() {
+    setTheme((currentTheme) => currentTheme === 'light' ? 'dark' : 'light');
+  }
+
   return (
     <div className="site-shell">
       <div className="liquid-background" aria-hidden="true">
@@ -539,15 +544,13 @@ function App() {
       <audio ref={backgroundMusicRef} preload="metadata" src={backgroundMusicSrc} loop />
       <audio ref={clickAudioRef} preload="auto" src={clickAudioSrc} />
 
-      {!hasEntered && <WelcomeScreen isLeaving={isWelcomeLeaving} onChoose={enterPortfolio} />}
+      {!hasEntered && <WelcomeScreen isLeaving={isWelcomeLeaving} onChoose={enterPortfolio} theme={theme} onToggleTheme={toggleTheme} />}
 
       <aside className="utility-dock" aria-label="Portfolio controls">
         <button
           className="icon-button"
           type="button"
-          onClick={() => {
-            setTheme((currentTheme) => currentTheme === 'light' ? 'dark' : 'light');
-          }}
+          onClick={toggleTheme}
           aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`}
           title={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`}
         >
@@ -562,7 +565,6 @@ function App() {
           data-audio-state={isAudioEnabled ? 'on' : 'off'}
         >
           <span className="audio-toggle-label">{isAudioEnabled ? 'Sound on' : 'Sound off'}</span>
-          {isMuted ? '♪̸' : '♪'}
         </button>
         <button
           className="icon-button admin-mode-button"
@@ -790,12 +792,21 @@ function ChatMascot({ isOpen, onToggle }) {
   );
 }
 
-function WelcomeScreen({ isLeaving, onChoose }) {
+function WelcomeScreen({ isLeaving, onChoose, theme, onToggleTheme }) {
   return (
     <section className={isLeaving ? 'welcome-screen is-leaving' : 'welcome-screen'} aria-labelledby="welcome-title">
       <div className="aurora aurora-one" />
       <div className="aurora aurora-two" />
       <div className="welcome-card glass-panel">
+        <button
+          className="welcome-theme-toggle"
+          type="button"
+          onClick={onToggleTheme}
+          disabled={isLeaving}
+          aria-pressed={theme === 'dark'}
+          aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+          data-theme={theme}
+        />
         <span className="eyebrow">welcome to my corner of the internet</span>
         <div className="orbital-icon" aria-hidden="true"><span>✦</span></div>
         <h1 id="welcome-title">Are you in the mood for music?</h1>
