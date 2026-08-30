@@ -39,14 +39,14 @@ export const experienceItems = [
     description: 'Projects, learnings, and memorable team moments will be documented here.',
     images: [
       {
-        src: '/early-chapters/hackathon-build.jpg',
-        alt: 'Editorial 3D illustration of two laptops and translucent blue glass panels on a desk.',
-        label: 'Building together',
+        src: '/early-chapters/globe.jpg',
+        alt: 'Globe visual representing a broad perspective on technology and collaboration.',
+        label: 'A wider view',
       },
       {
-        src: '/early-chapters/hackathon-ideas.jpg',
-        alt: 'Editorial 3D illustration of a minimal ideas board with geometric forms and notes.',
-        label: 'Ideas in progress',
+        src: '/early-chapters/hackfest.jpg',
+        alt: 'Hackfest event visual.',
+        label: 'Hackfest moments',
       },
     ],
   },
@@ -77,23 +77,56 @@ export const contactLinks = [
 
 export const earlyChapterCarouselItems = [
   {
-    image: '/early-chapters/hackathon-build.jpg',
-    alt: 'Editorial illustration of two laptops and translucent blue glass panels on a desk.',
+    image: '/early-chapters/globe.jpg',
+    alt: 'Globe visual representing a broad perspective on technology and collaboration.',
   },
   {
-    image: '/early-chapters/hackathon-ideas.jpg',
-    alt: 'Editorial illustration of a minimal ideas board with geometric forms and notes.',
+    image: '/early-chapters/hackfest.jpg',
+    alt: 'Hackfest event visual.',
+  },
+];
+
+// Roadmap editor: add a new item here and set its `order` value to place it.
+// Change `direction` below to switch between newest-first and oldest-first.
+export const earlyChapterRoadmapSettings = {
+  direction: 'descending',
+};
+
+export const earlyChapterTimeline = [
+  {
+    eyebrow: '01 · perspective',
+    title: 'Exploring a wider view',
+    id: 'perspective',
+    order: 1,
+    description: 'A space for the ideas, collaborations, and questions that shape an early path in AI engineering.',
+    image: '/early-chapters/globe.jpg',
+    alt: 'Globe visual representing a broad perspective on technology and collaboration.',
   },
   {
+    eyebrow: '02 · build together',
+    title: 'Hackfest',
+    id: 'hackfest',
+    order: 2,
+    description: 'A growing record of build-focused moments, experiments, and lessons from working alongside other curious people.',
+    image: '/early-chapters/hackfest.jpg',
+    alt: 'Hackfest event visual.',
+  },
+  {
+    eyebrow: '03 · focused learning',
+    title: 'Keeping the curiosity moving',
+    id: 'focused-learning',
+    order: 3,
+    description: 'Learning milestones and reflections will live here as they are documented and added to the journey.',
     image: '/early-chapters/learning-focus.jpg',
-    alt: 'Editorial illustration of a tablet, notebook, pencil, and blue glass sphere on a study desk.',
+    alt: 'Study setup with a tablet, notebook, pencil, and blue glass sphere.',
   },
   {
-    image: '/early-chapters/learning-milestone.jpg',
-    alt: 'Editorial illustration of ascending translucent blue glass steps beside an open notebook.',
-  },
-  {
-    image: '/mascot/b561733f677eb2a8c395c97b16db4964.jpg',
-    alt: 'Converly project cover.',
+    eyebrow: '04 · continued growth',
+    title: 'Always learning',
+    id: 'always-learning',
+    order: 4,
+    description: 'A place to collect completed learning milestones and the next chapters still taking shape.',
+    image: '/Learning/asean.png',
+    alt: 'ASEAN learning certificate.',
   },
 ];

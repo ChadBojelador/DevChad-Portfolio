@@ -1,0 +1,39 @@
+.admin-panel-backdrop { position: fixed; z-index: 40; inset: 0; display: flex; justify-content: flex-end; background: rgba(5, 27, 45, 0.26); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+.admin-panel { width: min(34rem, 100%); height: 100%; display: flex; flex-direction: column; border-left: 1px solid var(--line); color: var(--text); background: color-mix(in srgb, var(--surface-strong) 94%, var(--background)); box-shadow: -22px 0 48px rgba(5, 45, 74, 0.18); }
+.admin-panel-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; padding: 1.35rem 1.35rem 1.1rem; border-bottom: 1px solid var(--line); }
+.admin-panel-header .panel-label { margin-bottom: 0.3rem; }
+.admin-panel-header h2 { margin: 0; font-size: 1.35rem; letter-spacing: -0.055em; }
+.admin-panel-header p:last-child { margin: 0.35rem 0 0; color: var(--muted); font-size: 0.78rem; }
+.admin-close-button { display: grid; width: 2.25rem; height: 2.25rem; flex: 0 0 auto; border: 1px solid var(--line); border-radius: 0.75rem; color: var(--text); background: transparent; cursor: pointer; font-size: 1.5rem; line-height: 1; place-items: center; }
+.admin-close-button:hover { background: var(--accent-soft); }
+.admin-panel-content { flex: 1; padding: 1.15rem 1.35rem 1.5rem; overflow-y: auto; }
+.admin-section + .admin-section { margin-top: 2rem; }
+.admin-section-heading, .admin-editor-card-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.8rem; }
+.admin-section-heading { margin-bottom: 0.85rem; }
+.admin-section-heading .panel-label { margin-bottom: 0.25rem; }
+.admin-section-heading h3 { margin: 0; font-size: 1rem; letter-spacing: -0.035em; }
+.admin-add-button, .admin-remove-button, .admin-reset-button, .admin-done-button { border: 1px solid var(--line); border-radius: 999px; cursor: pointer; font: inherit; font-size: 0.72rem; font-weight: 800; }
+.admin-add-button { padding: 0.52rem 0.7rem; color: var(--accent); background: color-mix(in srgb, var(--accent-soft) 65%, transparent); }
+.admin-remove-button { padding: 0.36rem 0.55rem; color: #c43d59; background: rgba(218, 79, 109, 0.08); }
+.admin-editor-card { padding: 0.95rem; border: 1px solid var(--line); border-radius: 1rem; background: color-mix(in srgb, var(--surface) 78%, transparent); }
+.admin-editor-card + .admin-editor-card { margin-top: 0.75rem; }
+.admin-editor-card-heading { align-items: center; margin-bottom: 0.8rem; }
+.admin-editor-card-heading strong { max-width: 19rem; overflow: hidden; font-size: 0.84rem; text-overflow: ellipsis; white-space: nowrap; }
+.admin-field { display: grid; gap: 0.35rem; margin-top: 0.65rem; color: var(--muted); font-size: 0.67rem; font-weight: 800; letter-spacing: 0.035em; text-transform: uppercase; }
+.admin-field input, .admin-field textarea, .admin-field select { width: 100%; box-sizing: border-box; border: 1px solid var(--line); border-radius: 0.7rem; color: var(--text); background: color-mix(in srgb, var(--surface-strong) 88%, transparent); font: inherit; font-size: 0.8rem; font-weight: 500; letter-spacing: normal; line-height: 1.45; text-transform: none; }
+.admin-field input, .admin-field select { min-height: 2.35rem; padding: 0.45rem 0.6rem; }
+.admin-field textarea { min-height: 4.8rem; padding: 0.55rem 0.6rem; resize: vertical; }
+.admin-field-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.65rem; }
+.admin-field-grid .admin-field { min-width: 0; }
+.admin-direction-field { width: min(100%, 15rem); margin: 0 0 0.85rem; }
+.admin-panel-footer { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; padding: 1rem 1.35rem; border-top: 1px solid var(--line); }
+.admin-reset-button { padding: 0.65rem 0.75rem; color: #b84860; background: transparent; }
+.admin-done-button { padding: 0.65rem 0.95rem; border-color: color-mix(in srgb, var(--accent) 55%, var(--line)); color: #fff; background: var(--accent); }
+.admin-add-button:hover, .admin-done-button:hover { filter: brightness(1.06); transform: translateY(-1px); }
+.admin-remove-button:hover, .admin-reset-button:hover { border-color: rgba(196, 61, 89, 0.5); background: rgba(218, 79, 109, 0.12); }
+
+@media (max-width: 560px) {
+  .admin-panel { width: 100%; }
+  .admin-panel-header, .admin-panel-content, .admin-panel-footer { padding-right: 1rem; padding-left: 1rem; }
+  .admin-field-grid { grid-template-columns: 1fr; gap: 0; }
+}

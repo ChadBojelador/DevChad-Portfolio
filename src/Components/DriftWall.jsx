@@ -35,7 +35,7 @@ function DriftWall({ projects }) {
           return (
             <article
               className="drift-card"
-              key={project.title}
+              key={project.id || project.title}
               style={{
                 '--card-x': `${placement.x}px`,
                 '--card-y': `${placement.y}px`,

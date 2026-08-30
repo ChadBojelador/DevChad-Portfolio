@@ -46,7 +46,7 @@ Build a personal, single-page portfolio for Chad, positioned for AI Engineer rol
 - Present the exact prompt: "Are you in the mood for music?"
 - Offer two choices: "I'm in the mood" and "I'm not in the mood".
 - Choosing the first option starts the supplied background audio and enters the portfolio. Choosing the second enters silently.
-- Provide a clearly discoverable mute/unmute control after entry. Audio must never autoplay before an explicit visitor choice.
+- Provide a clearly discoverable mute/unmute control after entry. 
 
 ### Required Sections
 

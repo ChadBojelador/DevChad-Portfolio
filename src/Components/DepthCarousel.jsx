@@ -36,6 +36,7 @@ const DepthCarousel = ({
   showControls = true,
   showIndicators = true,
   onChange,
+  variant = 'depth',
   className = ''
 }) => {
   const data = useMemo(() => (Array.isArray(items) ? items : []).map(normalizeItem), [items]);
@@ -48,6 +49,7 @@ const DepthCarousel = ({
 
   const posRef = useRef(0);
   const focusRef = useRef(0);
+  const storyPointerRef = useRef({ x: 0, y: 0 });
   const tweenRef = useRef(null);
   const scaleRef = useRef(1);
   const cfgRef = useRef({});
@@ -59,6 +61,7 @@ const DepthCarousel = ({
   const reducedRef = useRef(false);
 
   const [active, setActive] = useState(0);
+  const [likedItems, setLikedItems] = useState(() => new Set());
 
   useEffect(() => {
     onChangeRef.current = onChange;
@@ -75,12 +78,15 @@ const DepthCarousel = ({
       ease,
       loop,
       cardWidth,
+      cardHeight,
+      variant,
       autoplayDelay
     };
   }, [
     autoplayDelay,
     blur,
     cardWidth,
+    cardHeight,
     count,
     depth,
     duration,
@@ -91,6 +97,7 @@ const DepthCarousel = ({
     spread,
     tilt,
     tiltDirection,
+    variant,
     visibleCards
   ]);
 
@@ -100,6 +107,11 @@ const DepthCarousel = ({
     if (!n) return;
     const dir = cfg.tiltDirection === 'left' ? -1 : 1;
     const sc = scaleRef.current;
+    const isStory = cfg.variant === 'story';
+    const storyPointer = storyPointerRef.current;
+    const storyVisibleCards = isStory
+      ? Math.min(cfg.count, cfg.viewportWidth < 560 ? 2 : cfg.visibleCards)
+      : cfg.visibleCards;
 
     for (let i = 0; i < n; i++) {
       const el = cardRefs.current[i];
@@ -111,29 +123,40 @@ const DepthCarousel = ({
         if (d > n / 2) d -= n;
       }
 
-      const back = Math.max(0, d);
-      const az = Math.abs(d);
-      const shown = az <= cfg.visibleCards + 0.5;
+      const storyOffset = isStory && storyVisibleCards % 2 === 0 ? 0.5 : 0;
+      const storyDistance = isStory ? d - storyOffset : d;
+      const az = Math.abs(storyDistance);
+      const storyRange = Math.max(0, (storyVisibleCards - 1) / 2);
+      const shown = isStory ? az <= storyRange + 0.52 : az <= cfg.visibleCards + 0.5;
+      // Story cards occupy their own fixed slots, separated by a small gap.
+      // This keeps the visible set side by side instead of layered in depth.
+      const storyGap = cfg.viewportWidth >= 700 ? 48 : 18;
+      const storyTravel = cfg.cardWidth + storyGap / sc;
+      const storyParallax = isStory ? (i % 2 === 0 ? 0.32 : -0.32) : 0;
+      const tx = isStory ? storyDistance * storyTravel + storyPointer.x * storyParallax : dir * cfg.spread * d;
+      const ty = isStory ? (i % 3 === 0 ? 10 : i % 3 === 1 ? -8 : 4) + storyPointer.y * (0.3 + (i % 2) * 0.12) : 0;
+      const rz = isStory ? (i % 3 === 0 ? -6 : i % 3 === 1 ? 5 : -3) : 0;
+      const tz = isStory ? 0 : -cfg.depth * d;
+      const ry = isStory ? 0 : dir * cfg.tilt * clamp(d, 0, 1);
 
-      const tz = -cfg.depth * d;
-      const tx = dir * cfg.spread * d;
-      const ry = dir * cfg.tilt * clamp(d, 0, 1);
-
-      let opacity = d < 0 ? Math.max(0, 1 + d) : 1;
+      let opacity = isStory
+        ? clamp(1 - Math.max(0, az - storyRange) * 0.35, 0, 1)
+        : d < 0 ? Math.max(0, 1 + d) : 1;
       if (!shown) opacity = 0;
 
-      const brightness = Math.max(0.15, 1 - back * cfg.falloff);
-      const blurPx = cfg.blur > 0 ? Math.min(cfg.blur, (back / Math.max(1, cfg.visibleCards)) * cfg.blur) : 0;
-      const zi = Math.round(2000 - d * 20);
+      const back = Math.max(0, d);
+      const brightness = isStory ? 1 : Math.max(0.15, 1 - back * cfg.falloff);
+      const blurPx = isStory ? 0 : cfg.blur > 0 ? Math.min(cfg.blur, (back / Math.max(1, cfg.visibleCards)) * cfg.blur) : 0;
+      const zi = Math.round(2000 - az * 20);
 
-      el.style.transform = `translate(-50%, -50%) scale(${sc}) translateX(${tx.toFixed(2)}px) translateZ(${tz.toFixed(2)}px) rotateY(${ry.toFixed(3)}deg)`;
+      el.style.transform = `translate(-50%, -50%) scale(${sc}) translateX(${tx.toFixed(2)}px) translateY(${ty.toFixed(2)}px) translateZ(${tz.toFixed(2)}px) rotateY(${ry.toFixed(3)}deg) rotateZ(${rz.toFixed(3)}deg)`;
       el.style.opacity = opacity.toFixed(3);
       el.style.filter = `brightness(${brightness.toFixed(3)}) blur(${blurPx.toFixed(2)}px)`;
       el.style.zIndex = String(zi);
       el.style.pointerEvents = shown && opacity > 0.05 ? 'auto' : 'none';
 
       const ov = overlayRefs.current[i];
-      if (ov) ov.style.opacity = clamp(back * cfg.falloff * 1.25, 0, 0.86).toFixed(3);
+      if (ov) ov.style.opacity = isStory ? '0' : clamp(back * cfg.falloff * 1.25, 0, 0.86).toFixed(3);
     }
   }, []);
 
@@ -186,10 +209,23 @@ const DepthCarousel = ({
     const root = rootRef.current;
     if (!root) return;
     const ro = new ResizeObserver(entries => {
-      const w = entries[0].contentRect.width;
+      const { width: w, height: h } = entries[0].contentRect;
       const cfg = cfgRef.current;
-      const needed = cfg.cardWidth + Math.abs(cfg.spread) * 2 + 120;
-      scaleRef.current = clamp(w / needed, 0.4, 1);
+      cfg.viewportWidth = w;
+      const storyVisibleCards = cfg.variant === 'story'
+        ? Math.min(cfg.count, w < 560 ? 2 : cfg.visibleCards)
+        : cfg.visibleCards;
+      const storyGap = w >= 700 ? 48 : 18;
+      const needed = cfg.variant === 'story'
+        ? cfg.cardWidth * storyVisibleCards + storyGap * Math.max(0, storyVisibleCards - 1) + 32
+        : cfg.cardWidth + Math.abs(cfg.spread) * 2 + 120;
+      const widthScale = w / needed;
+      const heightScale = cfg.variant === 'story' ? h / (cfg.cardHeight + 28) : 1;
+      scaleRef.current = clamp(
+        cfg.variant === 'story' ? Math.min(widthScale, heightScale) : widthScale,
+        cfg.variant === 'story' ? 0.28 : 0.4,
+        1
+      );
       layout(posRef.current);
     });
     ro.observe(root);
@@ -236,8 +272,19 @@ const DepthCarousel = ({
 
   const onPointerMove = useCallback(e => {
     const drag = dragRef.current;
-    if (!drag) return;
+    const root = rootRef.current;
     const cfg = cfgRef.current;
+    if (cfg.variant === 'story' && root) {
+      const bounds = root.getBoundingClientRect();
+      storyPointerRef.current = {
+        x: ((e.clientX - bounds.left) / bounds.width - 0.5) * 14,
+        y: ((e.clientY - bounds.top) / bounds.height - 0.5) * 10
+      };
+    }
+    if (!drag) {
+      if (cfg.variant === 'story') layout(posRef.current);
+      return;
+    }
     const stepPx = Math.max(cfg.cardWidth * 0.55 * scaleRef.current, 40);
     const dx = e.clientX - drag.x;
     if (!drag.moved && Math.abs(dx) > 4) {
@@ -251,6 +298,12 @@ const DepthCarousel = ({
     drag.lastX = e.clientX;
     drag.lastT = now;
     posRef.current = drag.startPos - dx / stepPx;
+    layout(posRef.current);
+  }, [layout]);
+
+  const resetStoryPointer = useCallback(() => {
+    if (cfgRef.current.variant !== 'story') return;
+    storyPointerRef.current = { x: 0, y: 0 };
     layout(posRef.current);
   }, [layout]);
 
@@ -279,6 +332,16 @@ const DepthCarousel = ({
     if (dragRef.current?.moved) return;
     setFocus(index, true);
   }, [setFocus]);
+
+  const toggleLike = useCallback((event, index) => {
+    event.stopPropagation();
+    setLikedItems(previous => {
+      const next = new Set(previous);
+      if (next.has(index)) next.delete(index);
+      else next.add(index);
+      return next;
+    });
+  }, []);
 
   useEffect(() => {
     reducedRef.current = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -324,7 +387,7 @@ const DepthCarousel = ({
 
   useEffect(() => {
     layout(posRef.current);
-  }, [layout, depth, spread, tilt, tiltDirection, visibleCards, falloff, blur, cardWidth, cardHeight, radius, count]);
+  }, [layout, depth, spread, tilt, tiltDirection, visibleCards, falloff, blur, cardWidth, cardHeight, radius, count, variant]);
 
   useEffect(() => () => {
     tweenRef.current?.kill();
@@ -335,14 +398,15 @@ const DepthCarousel = ({
   return (
     <div
       ref={rootRef}
-      className={`depth-carousel ${className}`.trim()}
+      className={`depth-carousel${variant === 'story' ? ' depth-carousel--story' : ''}${className ? ` ${className}` : ''}`}
       style={{ '--dc-perspective': `${perspective}px` }}
       role="group"
       aria-roledescription="carousel"
-      aria-label="Depth carousel"
+      aria-label={variant === 'story' ? 'Early chapters stories' : 'Depth carousel'}
       tabIndex={0}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
+      onPointerLeave={resetStoryPointer}
       onPointerUp={onPointerEnd}
       onPointerCancel={onPointerEnd}
       onKeyDown={onKeyDown}>
@@ -352,7 +416,7 @@ const DepthCarousel = ({
             key={i}
             className="depth-carousel__card"
             ref={el => (cardRefs.current[i] = el)}
-            style={{ width: cardWidth, height: cardHeight, borderRadius: radius }}
+            style={{ width: cardWidth, height: cardHeight, borderRadius: radius, opacity: i === 0 ? 1 : 0 }}
             aria-roledescription="slide"
             aria-label={`${i + 1} of ${count}`}
             aria-hidden={active !== i}
@@ -366,6 +430,19 @@ const DepthCarousel = ({
               className="depth-carousel__tint"
               ref={el => (overlayRefs.current[i] = el)}
               style={{ background: tint }} />
+            {variant === 'story' && (
+              <div className="depth-carousel__story-interface">
+                <button
+                  className={likedItems.has(i) ? 'depth-carousel__story-like is-liked' : 'depth-carousel__story-like'}
+                  type="button"
+                  aria-label={likedItems.has(i) ? `Unlike story ${i + 1}` : `Like story ${i + 1}`}
+                  aria-pressed={likedItems.has(i)}
+                  onClick={event => toggleLike(event, i)}
+                >
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 4.7a5.4 5.4 0 0 0-7.6 0L12 5.9l-1.2-1.2a5.4 5.4 0 0 0-7.6 7.6L12 21l8.8-8.7a5.4 5.4 0 0 0 0-7.6Z" /></svg>
+                </button>
+              </div>
+            )}
           </div>
         ))}
       </div>
