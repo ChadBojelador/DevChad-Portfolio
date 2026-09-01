@@ -1,17 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import './PortfolioAssistant.css';
 
-const starterQuestions = [
-  'Which project best shows your AI skills?',
-  'What technologies do you work with?',
-  'Tell me about your most challenging project.',
-  'What should a recruiter look at first?',
-  'Have you built anything involving RAG?',
-];
-
 const initialMessage = {
   role: 'assistant',
-  content: 'I can help you explore Chad\'s projects, technical focus, and early AI engineering journey. What would you like to know?',
+  content: 'Hey! I’m Pandy, Chad’s sidekick. Ask me about the AI projects he’s building, the tools he likes working with, or the journey that brought him here—where should we start?',
   suggestions: [],
 };
 
@@ -173,13 +165,6 @@ export default function PortfolioAssistant({
             ))}
           </div>
 
-          {messages.length === 1 && (
-            <div className="chat-starters" aria-label="Suggested questions">
-              {starterQuestions.map((question) => (
-                <button type="button" key={question} onClick={() => sendMessage(question)}>{question}</button>
-              ))}
-            </div>
-          )}
           {error && <p className="chat-error" role="alert">{error}</p>}
           <div className="chat-composer">
             <textarea
