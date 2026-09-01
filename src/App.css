@@ -655,7 +655,7 @@
 }
 
 @media (min-width: 701px) {
-  .hero h1 { white-space: normal; overflow-wrap: anywhere; }
+  .hero h1 { white-space: nowrap; }
 
   .hero:not(.is-docked) .mascot-frame.has-mascot-image {
     margin-bottom: -1.1rem;
