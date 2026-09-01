@@ -74,6 +74,8 @@ export const contactLinks = [
   { label: 'GitHub', href: 'https://github.com/ChadBojelador' },
   { label: 'Email', href: 'mailto:chadbojelador9@gmail.com' },
   { label: 'LinkedIn', href: 'https://www.linkedin.com/in/chad-bojelador/' },
+  { label: 'Facebook', href: 'https://www.facebook.com/chad.bojelador/' },
+  { label: 'Instagram', href: 'https://instagram.com/_itschd/' },
 ];
 
 export const earlyChapterCarouselItems = [
