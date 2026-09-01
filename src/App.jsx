@@ -766,16 +766,16 @@ function WelcomeScreen({ isLeaving, onChoose, theme, onToggleTheme }) {
     <section className={isLeaving ? 'welcome-screen is-leaving' : 'welcome-screen'} aria-labelledby="welcome-title">
       <div className="aurora aurora-one" />
       <div className="aurora aurora-two" />
+      <button
+        className="welcome-theme-toggle"
+        type="button"
+        onClick={onToggleTheme}
+        disabled={isLeaving}
+        aria-pressed={theme === 'dark'}
+        aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+        data-theme={theme}
+      />
       <div className="welcome-card glass-panel">
-        <button
-          className="welcome-theme-toggle"
-          type="button"
-          onClick={onToggleTheme}
-          disabled={isLeaving}
-          aria-pressed={theme === 'dark'}
-          aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
-          data-theme={theme}
-        />
         <span className="eyebrow">welcome to my corner of the internet</span>
         <div className="orbital-icon" aria-hidden="true"><span>✦</span></div>
         <h1 id="welcome-title">Are you in the mood for music?</h1>
@@ -842,7 +842,7 @@ function Hero({ isDocked, onScrollToSection }) {
       </div>
       <div className="hero-copy">
         <h1 id="hero-title">Meet Chad!</h1>
-        <p className="hero-role">An AI Engineer creating thoughtful solutions for real people</p>
+        <p className="hero-role">AN AI ENGINEER CREATING THOUGHTFUL SOLUTIONS FOR REAL PEOPLE</p>
         <p className="hero-description">I&apos;m interested in the human side of intelligent technology: where useful systems, considerate design, and curiosity meet.</p>
         <div className="hero-actions">
           <SpecularButton
