@@ -11,6 +11,7 @@ Built for recruiters and collaborators, this site shares my work as an aspiring 
 - Interactive GInsights project story with a walkthrough and testable prototype
 - Early Chapters roadmap for IThink, hackathons, competitions, and industry connections
 - Subtle glassmorphism, motion, and accessible keyboard controls
+- A streaming semantic portfolio assistant backed by FastAPI, Gemini, and Supabase pgvector
 
 ## Built with
 
@@ -28,6 +29,20 @@ npm run dev
 ```
 
 Open the local URL shown in the terminal.
+
+## Portfolio assistant setup
+
+The chat is deliberately server-side: browser code never receives Gemini or Supabase credentials.
+
+1. Create a Supabase project and run [api/schema.sql](api/schema.sql) in its SQL editor.
+2. Copy `.env.example` to a private `.env` file and fill in the backend values.
+3. Install the Python service dependencies: `python -m pip install -r api/requirements.txt`.
+4. Run `python scripts/ingest_portfolio.py` whenever files in `knowledge/` change.
+5. Run `uvicorn api.main:app --reload --port 8000 --env-file .env` in a second terminal, then run `npm run dev`.
+
+`knowledge/` is the source of truth for chatbot facts. It uses small, meaningful records instead of embedding pages. Update it alongside portfolio content, then rerun ingestion. The Vite proxy maps the frontend's `/api/chat` requests to FastAPI during local development; set `VITE_CHAT_API_URL` when deploying the API separately.
+
+The Gemini migration retains the existing 1,536-dimension vector schema. Run `python scripts/ingest_portfolio.py` before using chat so the existing OpenAI embeddings are replaced with Gemini embeddings.
 
 ## Scripts
 

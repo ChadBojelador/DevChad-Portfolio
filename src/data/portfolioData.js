@@ -12,9 +12,10 @@ export const technologies = [
 export const projects = [
   {
     number: '01',
-    title: 'Project one',
-    summary: 'A future home for an AI-powered product, its problem, and the impact it creates.',
-    stack: ['AI', 'React', 'API'],
+    title: 'PasyenTrack',
+    summary: 'A medical record management system that centralizes patient records with secure access and fast lookup.',
+    details: 'PasyenTrack is a desktop medical record management system built with C++, Qt, and MySQL. It combines authentication, record management, and search with a binary-search-tree index for faster patient lookup.',
+    stack: ['C++', 'Qt', 'MySQL'],
     image: '',
     github: '',
     liveDemo: '',

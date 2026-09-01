@@ -1,0 +1,2 @@
+# Python dependencies for the portfolio assistant backend.
+-r api/requirements.txt

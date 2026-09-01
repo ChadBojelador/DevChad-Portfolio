@@ -1,0 +1,16 @@
+[
+  {
+    "type": "project",
+    "title": "GInsights in GCash for Business",
+    "slug": "ginsights",
+    "content": "GInsights is a financial decision-partner concept built for GCash for Business as part of ImaGnation 2026. Its prototype turns business cash-flow information into practical guidance: a loan-risk view, a safe payment amount, break-even context, a cash calendar, and clear recommendations. The project emphasizes product thinking, approachable financial explanations, and using AI-informed guidance to support small-business decisions. The portfolio describes it as a team project by IThink; it was disqualified, but the work strengthened the team's approach to iteration and collaboration.",
+    "metadata": {"projectSlug": "ginsights", "href": "#product-stories", "shortDescription": "AI-informed financial guidance concept for small businesses.", "technologies": ["Product prototyping", "JavaScript"], "categories": ["fintech", "AI-informed guidance", "product design", "cash flow"]}
+  },
+  {
+    "type": "project",
+    "title": "PasyenTrack",
+    "slug": "pasyentrack",
+    "content": "PasyenTrack is a medical record management system built using C++, Qt and MySQL. It centralizes patient records and includes authentication, record search, and record management. A binary-search-tree index supports faster patient lookup. It is relevant to healthcare-adjacent software, desktop application development, database integration, and structured data handling.",
+    "metadata": {"projectSlug": "pasyentrack", "href": "#product-stories", "shortDescription": "Medical record management system with MySQL-backed patient records.", "technologies": ["C++", "Qt", "MySQL"], "categories": ["healthcare", "medical records", "desktop application", "database", "data structures"]}
+  }
+]

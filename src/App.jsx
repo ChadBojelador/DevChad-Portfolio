@@ -3,6 +3,7 @@ import { gsap } from 'gsap';
 import AdminPanel from './Components/AdminPanel';
 import DepthCarousel from './Components/DepthCarousel';
 import DriftWall from './Components/DriftWall';
+import PortfolioAssistant from './Components/PortfolioAssistant';
 import SpecularButton from './Components/SpecularButton';
 import {
   contactLinks,
@@ -601,9 +602,16 @@ function App() {
       )}
 
       {hasEntered && (
-        <ChatMascot
+        <PortfolioAssistant
+          currentPage={activePage === 'home' ? '/' : detailPageHashes[activePage]}
+          currentProject={activePage === 'productStories' ? 'ginsights' : null}
           isOpen={isChatOpen}
           onToggle={() => setIsChatOpen((currentState) => !currentState)}
+          mascotSrc={chatMascotSrc}
+          onNavigateProject={(project) => {
+            if (project.href === '#product-stories') openDetailPage('productStories');
+            if (project.href === '#projects') scrollToSection('projects');
+          }}
         />
       )}
 
@@ -749,45 +757,6 @@ function CustomScrollbar({ onScrollTo }) {
           tabIndex={metrics.maxScroll ? 0 : -1}
         />
       </div>
-    </aside>
-  );
-}
-
-function ChatMascot({ isOpen, onToggle }) {
-  function toggleChat() {
-    onToggle();
-  }
-
-  return (
-    <aside className="chat-assistant" aria-label="Chat assistant">
-      {isOpen && (
-        <section id="chat-panel" className="chat-panel glass-panel" aria-labelledby="chat-title">
-          <div className="chat-panel-heading">
-            <div>
-              <p className="eyebrow">Chad&apos;s chat mascot</p>
-              <h2 id="chat-title">Hey, I&apos;m here to help.</h2>
-            </div>
-            <button className="chat-close-button" type="button" onClick={toggleChat} aria-label="Close chat">
-              <span aria-hidden="true">×</span>
-            </button>
-          </div>
-          <p className="chat-panel-message">I&apos;m getting ready to answer questions about Chad&apos;s work, projects, and AI engineering journey.</p>
-          <p className="chat-status"><span aria-hidden="true" />Chat is in development</p>
-        </section>
-      )}
-      <button
-        className={isOpen ? 'chat-launcher is-open' : 'chat-launcher'}
-        type="button"
-        onClick={toggleChat}
-        aria-label={isOpen ? 'Close chat assistant' : 'Open chat assistant'}
-        aria-expanded={isOpen}
-        aria-controls="chat-panel"
-      >
-        <span className="chat-mascot-avatar" aria-hidden="true">
-          <img src={chatMascotSrc} alt="" />
-        </span>
-        <span className="chat-launcher-label">Talk to me</span>
-      </button>
     </aside>
   );
 }

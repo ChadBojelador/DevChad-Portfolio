@@ -1,0 +1,9 @@
+[
+  {
+    "type": "skill",
+    "title": "Technical focus",
+    "slug": "technical-focus",
+    "content": "The portfolio lists Python, JavaScript, React, Node.js, machine learning, LLM applications, APIs, and Git and GitHub as Chad's technology focus areas. The portfolio does not make a stronger claim about depth in any one technology without project-specific evidence.",
+    "metadata": {"technologies": ["Python", "JavaScript", "React", "Node.js", "Machine Learning", "LLM Applications", "APIs", "Git & GitHub"], "categories": ["software development", "AI engineering"]}
+  }
+]
