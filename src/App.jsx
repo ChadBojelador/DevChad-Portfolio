@@ -841,8 +841,8 @@ function Hero({ isDocked, onScrollToSection }) {
         )}
       </div>
       <div className="hero-copy">
-        <h1 id="hero-title">Meet Chad Bojelador!</h1>
-        <p className="hero-role">DEV CHAD | AN AI ENGINEER CREATING THOUGHTFUL SOLUTIONS FOR REAL PEOPLE</p>
+        <h1 id="hero-title">Meet Chad!</h1>
+        <p className="hero-role">An AI Engineer creating thoughtful solutions for real people.</p>
         <p className="hero-description">I&apos;m interested in the human side of intelligent technology: where useful systems, considerate design, and curiosity meet.</p>
         <div className="hero-actions">
           <SpecularButton
