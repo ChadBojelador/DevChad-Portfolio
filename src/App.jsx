@@ -842,10 +842,10 @@ function Hero({ isDocked, onScrollToSection }) {
           )}
         </div>
         <div className="hero-copy">
-          <p className="hero-eyebrow">AI Engineer <span aria-hidden="true">•</span> Builder <span aria-hidden="true">•</span> Student</p>
+          <p className="hero-eyebrow">Human-centered AI <span aria-hidden="true">•</span> Built end to end</p>
           <h1 id="hero-title">Meet Chad!</h1>
-          <p className="hero-role">I build intelligent products for real people.</p>
-          <p className="hero-description">AI Engineer focused on useful systems, thoughtful design, and human-centered technology.</p>
+          <p className="hero-role">AI Engineer &amp; full-stack developer.</p>
+          <p className="hero-description">I build useful, human-centered AI products from idea to launch.</p>
           <div className="hero-actions">
             <SpecularButton
               className="brand-specular-button--primary"
@@ -862,7 +862,7 @@ function Hero({ isDocked, onScrollToSection }) {
               thickness={1.2}
               onClick={() => onScrollToSection('projects')}
             >
-              Explore projects <span aria-hidden="true">↓</span>
+              View projects <span aria-hidden="true">↓</span>
             </SpecularButton>
             <SpecularButton
               className="brand-specular-button--soft"
@@ -879,7 +879,7 @@ function Hero({ isDocked, onScrollToSection }) {
               thickness={1.1}
               onClick={() => onScrollToSection('contact')}
             >
-              Let&apos;s connect
+              Contact me
             </SpecularButton>
           </div>
         </div>
@@ -950,8 +950,8 @@ function Experience({ onOpenPage, carouselItems, presentation }) {
           <DepthCarousel
             items={carouselItems}
             variant="story"
-            cardWidth={294}
-            cardHeight={430}
+            cardWidth={320}
+            cardHeight={468}
             radius={24}
             duration={560}
             visibleCards={3}
