@@ -831,54 +831,57 @@ function Hero({ isDocked, onScrollToSection }) {
       className={isDocked ? 'hero hero-centered section is-docked' : 'hero hero-centered section'}
       aria-labelledby="hero-title"
     >
-      <div className="hero-glass-card" aria-hidden="true" />
-      <div className={hasMascotImage ? 'mascot-frame has-mascot-image' : 'mascot-frame'}>
-        {hasMascotImage ? <img src={mascotSrc} alt="Chad's mascot" onError={() => setHasMascotImage(false)} /> : (
-          <div className="mascot-placeholder" aria-label="Mascot image placeholder">
-            <span>✦</span>
-            <p>Drop your mascot into<br />public/mascot</p>
+      <div className="hero-card-shell">
+        <div className="hero-glass-card" aria-hidden="true" />
+        <div className={hasMascotImage ? 'mascot-frame has-mascot-image' : 'mascot-frame'}>
+          {hasMascotImage ? <img src={mascotSrc} alt="Chad's blue-cap mascot waving hello" onError={() => setHasMascotImage(false)} /> : (
+            <div className="mascot-placeholder" aria-label="Mascot image placeholder">
+              <span>✦</span>
+              <p>Drop your mascot into<br />public/mascot</p>
+            </div>
+          )}
+        </div>
+        <div className="hero-copy">
+          <p className="hero-eyebrow">AI Engineer <span aria-hidden="true">•</span> Builder <span aria-hidden="true">•</span> Student</p>
+          <h1 id="hero-title">Meet Chad!</h1>
+          <p className="hero-role">I build intelligent products for real people.</p>
+          <p className="hero-description">AI Engineer focused on useful systems, thoughtful design, and human-centered technology.</p>
+          <div className="hero-actions">
+            <SpecularButton
+              className="brand-specular-button--primary"
+              size="md"
+              radius={16}
+              tint="#1686dd"
+              tintOpacity={0}
+              blur={8}
+              lineColor="#d5f0ff"
+              baseColor="#075ca9"
+              intensity={1.3}
+              shineSize={24}
+              shineFade={25}
+              thickness={1.2}
+              onClick={() => onScrollToSection('projects')}
+            >
+              Explore projects <span aria-hidden="true">↓</span>
+            </SpecularButton>
+            <SpecularButton
+              className="brand-specular-button--soft"
+              size="md"
+              radius={16}
+              tint="#0c6eba"
+              tintOpacity={0}
+              blur={10}
+              lineColor="#bde9ff"
+              baseColor="#064b8a"
+              intensity={1.05}
+              shineSize={22}
+              shineFade={28}
+              thickness={1.1}
+              onClick={() => onScrollToSection('contact')}
+            >
+              Let&apos;s connect
+            </SpecularButton>
           </div>
-        )}
-      </div>
-      <div className="hero-copy">
-        <h1 id="hero-title">Meet Chad!</h1>
-        <p className="hero-role">An AI Engineer creating thoughtful solutions for real people.</p>
-        <p className="hero-description">I&apos;m interested in the human side of intelligent technology: where useful systems, considerate design, and curiosity meet.</p>
-        <div className="hero-actions">
-          <SpecularButton
-            className="brand-specular-button--primary"
-            size="md"
-            radius={16}
-            tint="#1686dd"
-            tintOpacity={0}
-            blur={8}
-            lineColor="#d5f0ff"
-            baseColor="#075ca9"
-            intensity={1.3}
-            shineSize={24}
-            shineFade={25}
-            thickness={1.2}
-            onClick={() => onScrollToSection('projects')}
-          >
-            Explore projects <span aria-hidden="true">↓</span>
-          </SpecularButton>
-          <SpecularButton
-            className="brand-specular-button--soft"
-            size="md"
-            radius={16}
-            tint="#0c6eba"
-            tintOpacity={0}
-            blur={10}
-            lineColor="#bde9ff"
-            baseColor="#064b8a"
-            intensity={1.05}
-            shineSize={22}
-            shineFade={28}
-            thickness={1.1}
-            onClick={() => onScrollToSection('contact')}
-          >
-            Let&apos;s connect
-          </SpecularButton>
         </div>
       </div>
     </section>
