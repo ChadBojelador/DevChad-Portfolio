@@ -154,7 +154,7 @@
 
 .section { width: min(72rem, calc(100% - 2.5rem)); margin: 0 auto; padding: clamp(2.4rem, 5vw, 4rem) 0 clamp(1.6rem, 3.5vw, 2.75rem); scroll-margin-top: var(--anchor-offset); }
 .hero { position: relative; display: grid; width: 100%; max-width: none; min-height: 100vh; min-height: 100dvh; padding: clamp(4.75rem, 8vh, 6rem) clamp(1rem, 3vw, 2rem) clamp(2rem, 6vh, 4rem); overflow: visible; isolation: isolate; place-items: center; text-align: center; transition: width 1000ms cubic-bezier(0.16, 1, 0.3, 1), margin 1000ms cubic-bezier(0.16, 1, 0.3, 1), padding 1000ms cubic-bezier(0.16, 1, 0.3, 1), text-align 480ms cubic-bezier(0.16, 1, 0.3, 1); }
-.hero-card-shell { position: relative; display: grid; width: min(90vw, 45rem); min-height: 0; padding: clamp(1.5rem, 3.6vw, 2.75rem) clamp(1.25rem, 4.5vw, 3.25rem) clamp(1.7rem, 4vw, 3rem); border-radius: clamp(1.35rem, 2.5vw, 1.8rem); justify-items: center; }
+.hero-card-shell { position: relative; display: grid; width: min(90vw, 45rem); min-height: 0; padding: clamp(1.5rem, 3.6vw, 2.75rem) clamp(1.25rem, 4.5vw, 3.25rem) clamp(1.7rem, 4vw, 3rem); border-radius: clamp(1.35rem, 2.5vw, 1.8rem); justify-items: center; transition: width 1000ms cubic-bezier(0.16, 1, 0.3, 1), min-height 1000ms cubic-bezier(0.16, 1, 0.3, 1), padding 1000ms cubic-bezier(0.16, 1, 0.3, 1), border-radius 1000ms cubic-bezier(0.16, 1, 0.3, 1); }
 .hero-glass-card { position: absolute; z-index: 0; inset: 0; border: 1px solid rgba(255, 255, 255, 0.78); border-radius: inherit; background: linear-gradient(145deg, rgba(255, 255, 255, 0.76), rgba(226, 245, 255, 0.5)); box-shadow: 0 24px 60px rgba(16, 117, 190, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.92); backdrop-filter: blur(20px) saturate(112%); -webkit-backdrop-filter: blur(20px) saturate(112%); transition: inset 1000ms cubic-bezier(0.16, 1, 0.3, 1), width 1000ms cubic-bezier(0.16, 1, 0.3, 1), border-radius 1000ms cubic-bezier(0.16, 1, 0.3, 1); }
 .hero-glass-card::before, .hero-glass-card::after { position: absolute; border-radius: inherit; content: ''; }
 .hero-glass-card::before { inset: 0.75rem; border: 1px solid rgba(255, 255, 255, 0.38); }
@@ -196,9 +196,9 @@
 .hero h1, .section-intro h2, .about-quote h2, .contact-card h2 { margin: 0; letter-spacing: -0.075em; line-height: 0.95; }
 .hero-eyebrow { margin: 0 0 clamp(0.55rem, 1.2vw, 0.8rem); color: #226b9e; font-size: clamp(0.68rem, 0.85vw, 0.8rem); font-weight: 850; letter-spacing: 0.13em; line-height: 1.4; text-transform: uppercase; }
 .hero-eyebrow span { display: inline-block; margin-inline: 0.35em; color: color-mix(in srgb, var(--accent) 72%, white); }
-.hero h1 { max-width: none; color: var(--accent); font-size: clamp(2.65rem, 6vw, 4.35rem); text-shadow: 0 4px 14px rgba(16, 122, 201, 0.1); }
-.hero-role { margin: clamp(0.65rem, 1.4vw, 0.9rem) 0 0; color: #235f8a; font-size: clamp(1rem, 1.6vw, 1.24rem); font-weight: 760; letter-spacing: -0.018em; line-height: 1.35; }
-.hero-description { width: 100%; max-width: 45ch; margin: clamp(0.55rem, 1.2vw, 0.75rem) 0 clamp(1.25rem, 2.5vw, 1.75rem); color: #3e6d91; font-size: clamp(0.91rem, 1.15vw, 1.02rem); line-height: 1.6; }
+.hero h1 { max-width: none; color: var(--accent); font-size: clamp(2.65rem, 6vw, 4.35rem); text-shadow: 0 4px 14px rgba(16, 122, 201, 0.1); transition: font-size 900ms cubic-bezier(0.16, 1, 0.3, 1), text-shadow 480ms ease; }
+.hero-role { margin: clamp(0.65rem, 1.4vw, 0.9rem) 0 0; color: #235f8a; font-size: clamp(1rem, 1.6vw, 1.24rem); font-weight: 760; letter-spacing: -0.018em; line-height: 1.35; transition: margin 900ms cubic-bezier(0.16, 1, 0.3, 1), font-size 900ms cubic-bezier(0.16, 1, 0.3, 1); }
+.hero-description { width: 100%; max-width: 45ch; margin: clamp(0.55rem, 1.2vw, 0.75rem) 0 clamp(1.25rem, 2.5vw, 1.75rem); color: #3e6d91; font-size: clamp(0.91rem, 1.15vw, 1.02rem); line-height: 1.6; transition: max-width 900ms cubic-bezier(0.16, 1, 0.3, 1), margin 900ms cubic-bezier(0.16, 1, 0.3, 1), font-size 900ms cubic-bezier(0.16, 1, 0.3, 1); }
 .hero-actions, .welcome-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.6rem; }
 .hero-actions .specular-button { min-width: 10.5rem; height: 3rem; min-height: 3rem; padding-inline: 1.25rem; box-sizing: border-box; }
 .hero-actions .brand-specular-button--primary { --sb-text-color: #fff !important; color: #fff; border-color: rgba(255, 255, 255, 0.58); background: linear-gradient(135deg, #1389da, #0568b5); box-shadow: 0 12px 26px rgba(4, 103, 180, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.24); }
@@ -613,6 +613,59 @@
   .portfolio-layout > .hero { position: relative; z-index: 1; }
   .portfolio-content { position: relative; z-index: 1; }
 
+  /* The opening composition scales independently; the docked state below is locked. */
+  .portfolio-layout:not(.hero-is-docked) .hero-card-shell {
+    width: min(88vw, clamp(52rem, 64vw, 72rem));
+    padding: clamp(2.25rem, 3vw, 3.5rem) clamp(3rem, 5vw, 6rem) clamp(2.6rem, 3.5vw, 4rem);
+    border-radius: clamp(1.7rem, 2.2vw, 2.35rem);
+  }
+
+  .portfolio-layout:not(.hero-is-docked) .hero-glass-card {
+    border-color: color-mix(in srgb, var(--glass-highlight) 78%, transparent);
+    background: linear-gradient(145deg, color-mix(in srgb, var(--surface-raised) 88%, transparent), color-mix(in srgb, var(--accent-soft) 58%, var(--surface)));
+    box-shadow: 0 34px 86px rgba(4, 84, 148, 0.2), 0 0 72px var(--glow-blue), inset 0 1px 0 var(--glass-highlight);
+    backdrop-filter: blur(28px) saturate(120%);
+    -webkit-backdrop-filter: blur(28px) saturate(120%);
+  }
+
+  .portfolio-layout:not(.hero-is-docked) .hero-glass-card::before {
+    inset: 1rem;
+    border-color: color-mix(in srgb, var(--glass-inner-line) 28%, transparent);
+  }
+
+  .portfolio-layout:not(.hero-is-docked) .hero-glass-card::after {
+    width: 30%;
+    right: 4%;
+    bottom: -12%;
+    background: color-mix(in srgb, var(--teal-accent) 28%, transparent);
+    filter: blur(38px);
+  }
+
+  .portfolio-layout:not(.hero-is-docked) .mascot-frame {
+    width: clamp(15rem, 18vw, 21rem);
+    margin-bottom: clamp(-0.7rem, -0.8vw, -0.35rem);
+  }
+
+  .portfolio-layout:not(.hero-is-docked) .mascot-frame::before {
+    position: absolute;
+    z-index: -1;
+    width: 82%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: radial-gradient(circle, color-mix(in srgb, var(--teal-accent) 24%, var(--accent-soft)) 0%, color-mix(in srgb, var(--primary-blue) 18%, transparent) 48%, transparent 72%);
+    content: '';
+    filter: blur(28px);
+    opacity: 0.72;
+  }
+
+  .portfolio-layout:not(.hero-is-docked) .hero-copy { max-width: 48rem; }
+  .portfolio-layout:not(.hero-is-docked) .hero-eyebrow { margin-bottom: clamp(0.7rem, 0.8vw, 0.95rem); font-size: clamp(0.76rem, 0.72vw, 0.9rem); }
+  .portfolio-layout:not(.hero-is-docked) .hero h1 { font-size: clamp(3.75rem, 5vw, 6rem); text-shadow: 0 8px 28px rgba(16, 122, 201, 0.14); }
+  .portfolio-layout:not(.hero-is-docked) .hero-role { margin-top: clamp(0.8rem, 1vw, 1.1rem); font-size: clamp(1.2rem, 1.3vw, 1.55rem); }
+  .portfolio-layout:not(.hero-is-docked) .hero-description { max-width: 50ch; margin: clamp(0.7rem, 0.9vw, 1rem) 0 clamp(1.5rem, 1.8vw, 2.15rem); font-size: clamp(1rem, 1vw, 1.2rem); line-height: 1.65; }
+  .portfolio-layout:not(.hero-is-docked) .hero-actions { gap: clamp(0.7rem, 0.8vw, 1rem); }
+  .portfolio-layout:not(.hero-is-docked) .hero-actions .specular-button { min-width: clamp(11.75rem, 12vw, 13.5rem); height: clamp(3.25rem, 3.2vw, 3.65rem); min-height: clamp(3.25rem, 3.2vw, 3.65rem); padding-inline: clamp(1.4rem, 1.8vw, 2rem); font-size: clamp(0.9rem, 0.82vw, 1rem); }
+
   .portfolio-layout.hero-is-docked {
     display: grid;
     width: min(100%, var(--layout-max));
@@ -675,6 +728,16 @@
     margin-right: max(var(--page-gutter), calc((100% - var(--layout-max)) / 2 + var(--page-gutter)));
     margin-left: max(calc(var(--page-gutter) + var(--sidebar-width) + var(--layout-gap)), calc((100% - var(--layout-max)) / 2 + var(--page-gutter) + var(--sidebar-width) + var(--layout-gap)));
   }
+}
+
+@media (min-width: 701px) and (max-width: 900px) {
+  .portfolio-layout:not(.hero-is-docked) .hero-card-shell { width: min(92vw, 50rem); padding: clamp(2rem, 4vw, 2.75rem) clamp(2rem, 6vw, 3.5rem) clamp(2.25rem, 5vw, 3rem); }
+  .portfolio-layout:not(.hero-is-docked) .mascot-frame { width: clamp(13.5rem, 24vw, 15.5rem); }
+  .portfolio-layout:not(.hero-is-docked) .hero-copy { max-width: 40rem; }
+  .portfolio-layout:not(.hero-is-docked) .hero h1 { font-size: clamp(3.25rem, 6.5vw, 4.5rem); }
+  .portfolio-layout:not(.hero-is-docked) .hero-role { font-size: clamp(1.08rem, 2.1vw, 1.25rem); }
+  .portfolio-layout:not(.hero-is-docked) .hero-description { max-width: 48ch; font-size: clamp(0.95rem, 1.7vw, 1.05rem); }
+  .portfolio-layout:not(.hero-is-docked) .hero-actions .specular-button { min-width: 11rem; height: 3.1rem; min-height: 3.1rem; font-size: 0.88rem; }
 }
 
 @media (min-width: 701px) {
