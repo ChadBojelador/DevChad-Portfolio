@@ -287,7 +287,7 @@ function App() {
   const [hasEntered, setHasEntered] = useState(() => sessionStorage.getItem(WELCOME_SESSION_KEY) === 'true');
   const [isWelcomeLeaving, setIsWelcomeLeaving] = useState(false);
   const [isAudioEnabled, setIsAudioEnabled] = useState(() => sessionStorage.getItem(AUDIO_ENABLED_SESSION_KEY) === 'true');
-  const [theme, setTheme] = useState(() => localStorage.getItem(THEME_STORAGE_KEY) ?? 'light');
+  const [theme, setTheme] = useState('dark');
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isHeroDocked, setIsHeroDocked] = useState(false);
   const [isHomeRestored, setIsHomeRestored] = useState(false);

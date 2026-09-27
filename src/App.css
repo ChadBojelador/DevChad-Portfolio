@@ -216,12 +216,13 @@
 
 .eyebrow, .panel-label, .project-number { margin: 0 0 0.8rem; color: var(--accent); font-size: clamp(0.68rem, 0.62vw, 0.78rem); font-weight: 800; letter-spacing: 0.12em; line-height: 1.4; text-transform: uppercase; }
 .about-section { margin-top: clamp(1.25rem, 2.5vw, 2rem); padding-top: clamp(1.9rem, 5vw, 3rem); }
-.about-quote { position: relative; display: grid; grid-template-columns: auto 1fr auto; align-items: start; gap: clamp(0.3rem, 1.8vw, 1rem); padding: clamp(1rem, 4.5vw, 2.6rem); overflow: hidden; background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), #e0f3ff); }
+.about-quote { position: relative; display: grid; min-height: clamp(21rem, 24vw, 25rem); grid-template-columns: auto 1fr auto; align-content: center; align-items: start; gap: clamp(0.5rem, 1.6vw, 1.35rem); padding: clamp(2rem, 4vw, 4rem); overflow: hidden; background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), #e0f3ff); }
 .about-quote::before { position: absolute; width: 13rem; height: 13rem; right: -6rem; bottom: -7rem; border-radius: 50%; background: rgba(66, 164, 229, 0.16); content: ''; filter: blur(10px); }
 .about-quote > div { position: relative; z-index: 1; }
-.about-quote h2 { max-width: 15ch; font-size: clamp(1.85rem, 2.35vw, 3rem); }
-.about-quote blockquote { max-width: 52rem; margin: clamp(0.9rem, 2vw, 1.5rem) 0 0; color: var(--text); font-size: clamp(1rem, 1.05vw, 1.3rem); font-weight: 560; letter-spacing: -0.035em; line-height: 1.5; }
-.quote-mark { position: relative; z-index: 1; color: var(--accent); font-family: Georgia, serif; font-size: clamp(2.25rem, 6vw, 4.5rem); line-height: 0.55; }
+.about-quote .eyebrow { margin-bottom: clamp(0.9rem, 1.2vw, 1.2rem); font-size: clamp(0.74rem, 0.68vw, 0.86rem); }
+.about-quote h2 { max-width: 15ch; font-size: clamp(2.35rem, 3.2vw, 4rem); }
+.about-quote blockquote { max-width: 58rem; margin: clamp(1.15rem, 1.7vw, 1.75rem) 0 0; color: var(--text); font-size: clamp(1.15rem, 1.25vw, 1.5rem); font-weight: 620; letter-spacing: -0.035em; line-height: 1.52; }
+.quote-mark { position: relative; z-index: 1; color: var(--accent); font-family: Georgia, serif; font-size: clamp(3.25rem, 5.5vw, 5.5rem); line-height: 0.55; }
 .quote-mark-close { align-self: end; padding-top: 2.6rem; }
 
 .section-intro { max-width: 40rem; }
@@ -736,9 +737,10 @@
   .chat-mascot-avatar { width: 2.55rem; height: 2.65rem; }
   .chat-mascot-avatar img { width: 2.3rem; height: 3.05rem; }
   .chat-launcher-label { display: none; }
-  .about-quote { grid-template-columns: 1.7rem 1fr 1.7rem; padding-inline: 1.25rem; }
-  .about-quote h2 { font-size: clamp(1.7rem, 7vw, 2.15rem); }
-  .about-quote blockquote { font-size: clamp(0.92rem, 3.6vw, 1rem); }
+  .about-quote { min-height: clamp(19rem, 80vw, 23rem); grid-template-columns: 1.7rem 1fr 1.7rem; padding: clamp(1.75rem, 7vw, 2.4rem) 1.25rem; }
+  .about-quote .eyebrow { margin-bottom: 0.85rem; font-size: clamp(0.68rem, 2.6vw, 0.76rem); }
+  .about-quote h2 { font-size: clamp(2rem, 7.8vw, 2.45rem); }
+  .about-quote blockquote { margin-top: 1rem; font-size: clamp(1rem, 3.8vw, 1.08rem); line-height: 1.55; }
   .section-intro h2, .contact-card h2 { font-size: clamp(1.7rem, 7vw, 2.15rem); }
   .section-intro > p:not(.eyebrow), .contact-card > p:not(.eyebrow) { font-size: 0.92rem; }
   .experience-gallery-slide { flex-basis: max(16rem, 82%); }
