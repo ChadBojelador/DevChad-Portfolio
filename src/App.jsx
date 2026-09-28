@@ -4,6 +4,7 @@ import AdminPanel from './Components/AdminPanel';
 import DepthCarousel from './Components/DepthCarousel';
 import DriftWall from './Components/DriftWall';
 import PortfolioAssistant from './Components/PortfolioAssistant';
+import ProjectShowcase from './Components/ProjectShowcase';
 import SpecularButton from './Components/SpecularButton';
 import {
   contactLinks,
@@ -40,7 +41,7 @@ function createDefaultPresentation() {
       home: {
         eyebrow: '02 · selected work',
         title: 'Projects in motion.',
-        description: 'Drag through the wall to explore the product stories as they take shape.',
+        description: 'Selected software and AI projects, from product thinking to implementation.',
         actionLabel: 'View product stories',
         storyImage: '/projects/ginsight/ginsight 1.png',
         storyImageAlt: 'Ginsight product preview',
@@ -53,8 +54,12 @@ function createDefaultPresentation() {
       },
       storyFeature: {
         eyebrow: 'Featured preview',
+        number: '01',
         title: 'GInsights in GCash for Business',
         description: 'Not a dashboard. Not a calculator. A financial decision partner built into GCash for Business. A project for ImaGnation 2026.',
+        summary: 'AI-informed financial guidance concept for small businesses.',
+        solution: 'The prototype turns business cash-flow information into practical guidance through loan-risk context, a safe payment amount, break-even context, a cash calendar, and clear recommendations.',
+        stack: ['Product prototyping', 'JavaScript'],
         image: '/projects/ginsight/ginsight 1.png',
         imageAlt: 'Ginsight product preview',
       },
@@ -117,6 +122,9 @@ function normalisePortfolioContent(content) {
   const savedStoryFeature = { ...savedPresentation.projects?.storyFeature };
 
   if (savedHome.storyTitle === 'Product stories in progress.') savedHome.storyTitle = '';
+  if (savedHome.description === 'Drag through the wall to explore the product stories as they take shape.') {
+    savedHome.description = 'Selected software and AI projects, from product thinking to implementation.';
+  }
   if (savedStoryFeature.title === 'Product stories in progress.') {
     savedStoryFeature.title = 'GInsights in GCash for Business';
     savedStoryFeature.description = 'Not a dashboard. Not a calculator. A financial decision partner built into GCash for Business. A project for ImaGnation 2026.';
@@ -916,21 +924,11 @@ function Projects({ onOpenPage, presentation, projects }) {
         actionLabel={home.actionLabel}
         onAction={onOpenPage}
       />
-      <div className="projects-bento-wall magnetic-bento-card">
-        <DriftWall projects={projects} />
-      </div>
-      <article className="projects-bento-note glass-panel magnetic-bento-card">
-        {home.storyImage && <img src={home.storyImage} alt={home.storyImageAlt || ''} loading="lazy" />}
-        <div className="projects-bento-copy">
-                <p className="projects-bento-label">{home.storyLabel}</p>
-                {home.storyTitle && <h3>{home.storyTitle}</h3>}
-          <p>{home.storyDescription}</p>
-        </div>
-      </article>
-      <article className="projects-bento-status glass-panel magnetic-bento-card">
-        {home.learningImage && <img src={home.learningImage} alt={home.learningImageAlt || ''} loading="lazy" />}
-        <p>{home.learningLabel}</p>
-      </article>
+      <ProjectShowcase
+        featuredProject={presentation.storyFeature}
+        projects={projects}
+        onOpenFeatured={onOpenPage}
+      />
     </section>
   );
 }

@@ -167,7 +167,7 @@
 .portfolio-layout.home-is-restored .magnetic-bento-card { opacity: 1; transform: translate3d(0, 0, 0) rotate(0deg) scale(1); }
 .magnetic-bento.is-settled .magnetic-bento-card:nth-of-type(2) { transition-delay: 80ms; }
 .magnetic-bento.is-settled .magnetic-bento-card:nth-of-type(3) { transition-delay: 150ms; }
-#projects.magnetic-bento { display: grid; grid-template-columns: minmax(0, 1fr) minmax(12rem, 0.38fr); grid-template-rows: auto minmax(7rem, 1fr) minmax(5.5rem, 0.72fr); gap: clamp(0.75rem, 1.15vw, 1.35rem); }
+#projects.magnetic-bento { display: grid; grid-template-columns: minmax(0, 1fr); gap: clamp(1.25rem, 2vw, 2rem); }
 #projects.magnetic-bento .section-intro { grid-column: 1 / -1; }
 .projects-bento-wall { grid-row: 2 / span 2; min-width: 0; }
 .projects-bento-note, .projects-bento-status { display: grid; min-height: 0; padding: clamp(0.65rem, 1vw, 0.9rem); overflow: hidden; place-content: stretch; }
