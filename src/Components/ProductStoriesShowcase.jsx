@@ -2,6 +2,7 @@ import React from 'react';
 import '../Styles/ProductStoriesPage.css';
 
 function isRealProject(project) {
+  if (project?.placeholder) return true;
   if (!project?.title) return false;
   const content = `${project.title} ${project.summary || ''}`.toLowerCase();
   return project.title.toLowerCase() !== 'project two'
