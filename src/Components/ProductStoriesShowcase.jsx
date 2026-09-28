@@ -32,7 +32,6 @@ function ProductStoriesShowcase({ featuredProject, screens, projects, onOpenFeat
         <div className="product-stories-visual glass-panel">
           <figure className="product-stories-visual-primary">
             <img src={primaryScreen.src} alt={primaryScreen.alt} />
-            <figcaption>Product interface</figcaption>
           </figure>
           <div className="product-stories-visual-rail" aria-label="Additional GInsights screens">
             {supportingScreens.slice(0, 2).map((screen) => (
