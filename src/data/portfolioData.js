@@ -40,6 +40,16 @@ export const projects = [
     liveDemo: '',
     caseStudy: '',
     placeholder: true,
+  },  {
+    number: '04',
+    title: 'Project placeholder four',
+    summary: 'Another project story is being prepared for this space.',
+    stack: [],
+    image: '',
+    github: '',
+    liveDemo: '',
+    caseStudy: '',
+    placeholder: true,
   },
 ];
 
