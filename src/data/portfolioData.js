@@ -30,6 +30,16 @@ export const projects = [
     github: '',
     liveDemo: '',
     caseStudy: '',
+  },  {
+    number: '03',
+    title: 'Project placeholder three',
+    summary: 'A new AI engineering project will be featured here soon.',
+    stack: [],
+    image: '',
+    github: '',
+    liveDemo: '',
+    caseStudy: '',
+    placeholder: true,
   },
 ];
 
