@@ -39,6 +39,7 @@ function ProjectMeta({ project }) {
 }
 
 function isPortfolioReady(project) {
+  if (project?.placeholder) return true;
   if (!project?.title) return false;
   const content = `${project.title} ${project.summary || ''}`.toLowerCase();
   return !content.includes('future home for an experiment');
