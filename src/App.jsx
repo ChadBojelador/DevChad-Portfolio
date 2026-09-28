@@ -2,9 +2,9 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import AdminPanel from './Components/AdminPanel';
 import DepthCarousel from './Components/DepthCarousel';
-import DriftWall from './Components/DriftWall';
 import PortfolioAssistant from './Components/PortfolioAssistant';
 import ProjectShowcase from './Components/ProjectShowcase';
+import ProductStoriesShowcase from './Components/ProductStoriesShowcase';
 import SpecularButton from './Components/SpecularButton';
 import {
   contactLinks,
@@ -53,13 +53,14 @@ function createDefaultPresentation() {
         learningLabel: 'Always learning',
       },
       storyFeature: {
-        eyebrow: 'Featured preview',
+        eyebrow: 'Featured story',
         number: '01',
         title: 'GInsights in GCash for Business',
         description: 'Not a dashboard. Not a calculator. A financial decision partner built into GCash for Business. A project for ImaGnation 2026.',
         summary: 'AI-informed financial guidance concept for small businesses.',
         solution: 'The prototype turns business cash-flow information into practical guidance through loan-risk context, a safe payment amount, break-even context, a cash calendar, and clear recommendations.',
         stack: ['Product prototyping', 'JavaScript'],
+        metadata: ['GCash ImaGnation 2026', 'FinTech', 'AI-informed guidance'],
         image: '/projects/ginsight/ginsight 1.png',
         imageAlt: 'Ginsight product preview',
       },
@@ -129,6 +130,7 @@ function normalisePortfolioContent(content) {
     savedStoryFeature.title = 'GInsights in GCash for Business';
     savedStoryFeature.description = 'Not a dashboard. Not a calculator. A financial decision partner built into GCash for Business. A project for ImaGnation 2026.';
   }
+  if (savedStoryFeature.eyebrow === 'Featured preview') savedStoryFeature.eyebrow = 'Featured story';
 
   return {
     projects: projects.map((project, index) => ({
@@ -603,7 +605,7 @@ function App() {
           </div>
         </main>
       ) : (
-        <main id="top" className="detail-page">
+        <main id="top" className={`detail-page detail-page--${activePage}`}>
           {activePage === 'productStories' && <ProductStoriesPage presentation={presentation.projects} projects={portfolioContent.projects} onBack={returnHome} />}
           {activePage === 'earlyChapters' && <EarlyChaptersPage items={earlyChapterRoadmapItems} presentation={presentation.earlyChapters.detail} onBack={returnHome} onImageOpen={setLightboxImage} />}
         </main>
@@ -1028,35 +1030,23 @@ function DetailPageHeader({ eyebrow, title, description, onBack }) {
 
 function ProductStoriesPage({ onBack, presentation, projects }) {
   const [isStoryOpen, setIsStoryOpen] = useState(false);
+  const emailHref = contactLinks.find((link) => link.href.startsWith('mailto:'))?.href;
 
   return (
-    <div className="detail-page-content">
+    <div className="detail-page-content product-stories-page">
       <DetailPageHeader
         eyebrow={presentation.detail.eyebrow}
         title={presentation.detail.title}
         description={presentation.detail.description}
         onBack={onBack}
       />
-      <section className="product-stories-detail" aria-labelledby="product-stories-title">
-        <article className="product-story-feature glass-panel">
-          {presentation.storyFeature.image && (
-            <div className="product-story-feature-media">
-              <img src={presentation.storyFeature.image} alt={presentation.storyFeature.imageAlt || ''} />
-            </div>
-          )}
-          <div className="product-story-feature-copy">
-            <p className="eyebrow">{presentation.storyFeature.eyebrow}</p>
-            <h2 id="product-stories-title">{presentation.storyFeature.title}</h2>
-            <p>{presentation.storyFeature.description}</p>
-            <button className="section-page-link product-story-feature-action" type="button" onClick={() => setIsStoryOpen(true)}>
-              View project story <span aria-hidden="true">→</span>
-            </button>
-          </div>
-        </article>
-        <div id="project-stories-wall" className="product-stories-wall">
-          <DriftWall projects={projects} interactive />
-        </div>
-      </section>
+      <ProductStoriesShowcase
+        featuredProject={presentation.storyFeature}
+        screens={ginsightsScreens}
+        projects={projects}
+        onOpenFeatured={() => setIsStoryOpen(true)}
+        emailHref={emailHref}
+      />
       {isStoryOpen && <GInsightsStoryDialog onClose={() => setIsStoryOpen(false)} />}
     </div>
   );

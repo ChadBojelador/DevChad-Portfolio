@@ -4,7 +4,8 @@ import '../Styles/ProductStoriesPage.css';
 function isRealProject(project) {
   if (!project?.title) return false;
   const content = `${project.title} ${project.summary || ''}`.toLowerCase();
-  return !content.includes('future home for an experiment');
+  return project.title.toLowerCase() !== 'project two'
+    && !content.includes('future home for an experiment');
 }
 
 function StoryLinks({ project }) {
@@ -76,7 +77,7 @@ function ProductStoriesShowcase({ featuredProject, screens, projects, onOpenFeat
           <h2 id="more-product-stories-title">More product stories</h2>
           <p>Projects, systems, and experiments I&apos;ve built along the way.</p>
         </header>
-        <div className="more-product-stories-grid">
+        <div className={`more-product-stories-grid${visibleProjects.length === 1 ? ' is-single' : ''}`}>
           {visibleProjects.map((project) => {
             const hasStory = Boolean(project.github || project.liveDemo || project.caseStudy);
             return (
